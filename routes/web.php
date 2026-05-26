@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,8 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', DashboardController::class)
         ->middleware('permission:dashboard.view')
         ->name('dashboard');
+
+    Route::resource('agencies', AgencyController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update'])
+        ->middleware('permission:agencies.view');
 });
