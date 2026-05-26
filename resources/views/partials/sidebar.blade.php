@@ -16,7 +16,10 @@
             <a class="nav-link {{ request()->routeIs('agencies.*') ? 'active' : '' }}" href="{{ route('agencies.index') }}">Agencias</a>
         @endcan
 
-        <span class="nav-link" style="opacity:.45; cursor:not-allowed;">Usuarios</span>
+        @can('users.view')
+            <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">Usuarios</a>
+        @endcan
+
         <span class="nav-link" style="opacity:.45; cursor:not-allowed;">Auditoría</span>
     </nav>
 

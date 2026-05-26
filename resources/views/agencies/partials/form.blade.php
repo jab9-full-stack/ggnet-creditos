@@ -1,11 +1,7 @@
 <section class="panel">
     <div class="panel-body">
         @if (isset($errors) && $errors->any())
-            <div class="error-box" style="margin-bottom:18px;">
-                @foreach ($errors->all() as $error)
-                    <div>{{ $error }}</div>
-                @endforeach
-            </div>
+            <div class="inline-error-source" data-toast-type="error" data-toast-title="Revisa la información" data-toast-message="{{ $errors->first() }}"></div>
         @endif
 
         <form method="POST" action="{{ $action }}" id="agency-form">
@@ -14,7 +10,7 @@
                 @method($method)
             @endif
 
-            <div class="grid grid-3">
+            <div class="form-grid-uniform">
                 <label class="form-group">
                     <span class="label">Código <span style="color:var(--danger);">*</span></span>
                     <input
@@ -28,7 +24,7 @@
                     <small class="muted">Se genera automáticamente desde el nombre.</small>
                 </label>
 
-                <label class="form-group" style="grid-column: span 2;">
+                <label class="form-group span-2">
                     <span class="label">Nombre de agencia <span style="color:var(--danger);">*</span></span>
                     <input
                         class="input"
@@ -39,7 +35,7 @@
                     >
                 </label>
 
-                <label class="form-group" style="grid-column: span 2;">
+                <label class="form-group">
                     <span class="label">Razón social <span style="color:var(--danger);">*</span></span>
                     <input
                         class="input"
@@ -83,7 +79,7 @@
                     <input class="input" name="country" value="{{ old('country', $agency->country ?? 'Guatemala') }}" required>
                 </label>
 
-                <label class="form-group" style="grid-column: span 3;">
+                <label class="form-group span-3">
                     <span class="label">Dirección <span style="color:var(--danger);">*</span></span>
                     <input
                         class="input"
@@ -103,7 +99,7 @@
                     <input class="input" name="department" value="{{ old('department', $agency->department) }}">
                 </label>
 
-                <label class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:38px;">
+                <label class="form-group" style="display:flex; align-items:center; gap:10px; min-height:46px;">
                     <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $agency->is_active ?? true))>
                     <span class="label">Agencia activa</span>
                 </label>

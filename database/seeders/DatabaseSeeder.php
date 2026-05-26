@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             'users.update',
             'users.block',
             'users.assign_roles',
+            'users.delete',
 
             'roles.view',
             'roles.manage',
@@ -43,6 +44,7 @@ class DatabaseSeeder extends Seeder
             'agencies.view',
             'agencies.create',
             'agencies.update',
+            'agencies.delete',
 
             'settings.view',
             'settings.update',
@@ -66,10 +68,12 @@ class DatabaseSeeder extends Seeder
                 'users.update',
                 'users.block',
                 'users.assign_roles',
+                'users.delete',
                 'roles.view',
                 'agencies.view',
                 'agencies.create',
                 'agencies.update',
+            'agencies.delete',
                 'settings.view',
                 'settings.update',
                 'audit_logs.view',

@@ -17,7 +17,11 @@
         </header>
 
         @if (session('status'))
-            <div class="status-box" style="margin-bottom:18px;">{{ session('status') }}</div>
+            <div hidden data-toast-type="success" data-toast-title="Operación completada" data-toast-message="{{ session('status') }}"></div>
+        @endif
+
+        @if (session('error'))
+            <div hidden data-toast-type="error" data-toast-title="No se pudo completar" data-toast-message="{{ session('error') }}"></div>
         @endif
 
         <section class="panel">
@@ -71,11 +75,19 @@
                                     @endif
                                 </td>
                                 <td style="text-align:right;">
-                                    @can('agencies.update')
-                                        <a class="btn" style="background:#eef2f7;" href="{{ route('agencies.edit', $agency) }}">Editar</a>
-                                    @else
-                                        <span class="muted">Sin acciones</span>
-                                    @endcan
+                                    <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                        @can('agencies.update')
+                                            <a class="btn" style="background:#eef2f7;" href="{{ route('agencies.edit', $agency) }}">Editar</a>
+                                        @endcan
+
+                                        @can('agencies.delete')
+                                            <form method="POST" action="{{ route('agencies.destroy', $agency) }}" data-confirm="true" data-confirm-title="Eliminar agencia" data-confirm-message="Esta acción eliminará la agencia si no tiene usuarios asignados.">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn" style="background:#fee2e2; color:var(--danger);" type="submit">Eliminar</button>
+                                            </form>
+                                        @endcan
+                                    </div>
                                 </td>
                             </tr>
                         @empty

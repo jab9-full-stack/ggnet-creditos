@@ -14,6 +14,8 @@ class AgencyController extends Controller
 {
     public function index(Request $request): View
     {
+        abort_unless($request->user()?->can('agencies.view'), 403);
+
         $search = trim((string) $request->query('search', ''));
 
         $agencies = Agency::query()
@@ -38,8 +40,10 @@ class AgencyController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
+        abort_unless($request->user()?->can('agencies.create'), 403);
+
         return view('agencies.create', [
             'agency' => new Agency([
                 'country' => 'Guatemala',
@@ -50,6 +54,8 @@ class AgencyController extends Controller
 
     public function store(Request $request, AuditLogger $auditLogger): RedirectResponse
     {
+        abort_unless($request->user()?->can('agencies.create'), 403);
+
         $data = $this->validateAgency($request);
         $data['code'] = $this->generateUniqueCode($data['name']);
 
@@ -64,8 +70,10 @@ class AgencyController extends Controller
             ->with('status', 'Agencia creada correctamente.');
     }
 
-    public function edit(Agency $agency): View
+    public function edit(Request $request, Agency $agency): View
     {
+        abort_unless($request->user()?->can('agencies.update'), 403);
+
         return view('agencies.edit', [
             'agency' => $agency,
         ]);
@@ -73,6 +81,8 @@ class AgencyController extends Controller
 
     public function update(Request $request, Agency $agency, AuditLogger $auditLogger): RedirectResponse
     {
+        abort_unless($request->user()?->can('agencies.update'), 403);
+
         $data = $this->validateAgency($request, $agency);
         $data['code'] = $this->generateUniqueCode($data['name'], $agency);
 
@@ -94,6 +104,27 @@ class AgencyController extends Controller
         return redirect()
             ->route('agencies.index')
             ->with('status', 'Agencia actualizada correctamente.');
+    }
+
+    public function destroy(Request $request, Agency $agency, AuditLogger $auditLogger): RedirectResponse
+    {
+        abort_unless($request->user()?->can('agencies.delete'), 403);
+
+        if ($agency->users()->exists()) {
+            return redirect()
+                ->route('agencies.index')
+                ->with('error', 'No se puede eliminar una agencia con usuarios asignados.');
+        }
+
+        $auditLogger->deleted($agency, 'agencies', [
+            'action' => 'agency.deleted',
+        ]);
+
+        $agency->delete();
+
+        return redirect()
+            ->route('agencies.index')
+            ->with('status', 'Agencia eliminada correctamente.');
     }
 
     private function validateAgency(Request $request, ?Agency $agency = null): array

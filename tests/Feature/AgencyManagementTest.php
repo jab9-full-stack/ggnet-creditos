@@ -29,6 +29,7 @@ class AgencyManagementTest extends TestCase
             'agencies.view',
             'agencies.create',
             'agencies.update',
+            'agencies.delete',
         ])->map(fn (string $permission) => Permission::query()->create([
             'name' => $permission,
             'guard_name' => 'web',
@@ -138,6 +139,31 @@ class AgencyManagementTest extends TestCase
                 'is_active' => '1',
             ])
             ->assertSessionHasErrors(['tax_id', 'phone']);
+    }
+
+
+    public function test_admin_can_delete_agency_without_users(): void
+    {
+        $admin = $this->admin();
+
+        $agency = Agency::query()->create([
+            'code' => 'TEMP',
+            'name' => 'Agencia Temporal',
+            'legal_name' => 'Agencia Temporal S.A.',
+            'tax_id' => '999999',
+            'phone' => '50255551111',
+            'address_line' => 'Zona 9',
+            'country' => 'Guatemala',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->delete("/agencies/{$agency->id}")
+            ->assertRedirect('/agencies');
+
+        $this->assertSoftDeleted('agencies', [
+            'id' => $agency->id,
+        ]);
     }
 
     public function test_guest_cannot_access_agencies(): void

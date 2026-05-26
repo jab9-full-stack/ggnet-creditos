@@ -294,6 +294,163 @@
             font-size: 14px;
         }
 
+        .toast-stack {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 10000;
+            display: grid;
+            gap: 10px;
+            width: min(92vw, 390px);
+            pointer-events: none;
+        }
+
+        .toast-item {
+            pointer-events: auto;
+            display: grid;
+            grid-template-columns: 34px 1fr 24px;
+            gap: 10px;
+            align-items: start;
+            padding: 14px 14px;
+            border-radius: 18px;
+            border: 1px solid transparent;
+            box-shadow: 0 16px 40px rgba(15,23,42,.18);
+            animation: toast-in .18s ease-out;
+        }
+
+        .toast-item.success {
+            background: #d1fae5;
+            border-color: #6ee7b7;
+            color: #064e3b;
+        }
+
+        .toast-item.error,
+        .toast-item.danger {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #7f1d1d;
+        }
+
+        .toast-item.warning {
+            background: #fef3c7;
+            border-color: #fcd34d;
+            color: #78350f;
+        }
+
+        .toast-item.info,
+        .toast-item.primary {
+            background: #dbeafe;
+            border-color: #93c5fd;
+            color: #1e3a8a;
+        }
+
+        .toast-item.secondary {
+            background: #e5e7eb;
+            border-color: #cbd5e1;
+            color: #1f2937;
+        }
+
+        .toast-icon {
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            background: rgba(255,255,255,.48);
+            font-weight: 950;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .toast-content {
+            min-width: 0;
+        }
+
+        .toast-title {
+            font-weight: 900;
+            font-size: 14px;
+            line-height: 1.25;
+        }
+
+        .toast-message {
+            margin-top: 3px;
+            color: currentColor;
+            opacity: .82;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .toast-close {
+            border: 0;
+            background: transparent;
+            color: currentColor;
+            opacity: .58;
+            cursor: pointer;
+            font-size: 22px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        .confirm-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            display: none;
+            place-items: center;
+            padding: 20px;
+            background: rgba(15,23,42,.46);
+            backdrop-filter: blur(3px);
+        }
+
+        .confirm-backdrop.is-active {
+            display: grid;
+        }
+
+        .confirm-card {
+            width: min(100%, 430px);
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--line);
+            box-shadow: 0 24px 70px rgba(15,23,42,.24);
+            padding: 24px;
+            animation: modal-in .16s ease-out;
+        }
+
+        .confirm-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .password-hint {
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .password-hint.ok {
+            color: var(--success);
+        }
+
+        .password-hint.bad {
+            color: var(--danger);
+        }
+
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes modal-in {
+            from { opacity: 0; transform: translateY(4px) scale(.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
         .muted { color: var(--muted); }
 
         .table {
@@ -522,12 +679,181 @@
 
 
 
+
+        /* BIENESTAR · Toasts tipo Bootstrap y formularios uniformes */
+        .toast-stack {
+            top: 18px !important;
+            right: 18px !important;
+            width: min(92vw, 430px) !important;
+        }
+
+        .toast-item {
+            display: grid !important;
+            grid-template-columns: 34px 1fr 24px !important;
+            gap: 12px !important;
+            align-items: center !important;
+            min-height: 64px !important;
+            padding: 14px 16px !important;
+            border-radius: 16px !important;
+            border-width: 1px !important;
+            border-style: solid !important;
+            border-left-width: 1px !important;
+            box-shadow: 0 14px 34px rgba(15,23,42,.16) !important;
+            overflow: hidden !important;
+        }
+
+        .toast-item.success {
+            background: #d1e7dd !important;
+            border-color: #a3cfbb !important;
+            color: #0a3622 !important;
+        }
+
+        .toast-item.error,
+        .toast-item.danger {
+            background: #f8d7da !important;
+            border-color: #f1aeb5 !important;
+            color: #58151c !important;
+        }
+
+        .toast-item.warning {
+            background: #fff3cd !important;
+            border-color: #ffe69c !important;
+            color: #664d03 !important;
+        }
+
+        .toast-item.info,
+        .toast-item.primary {
+            background: #cff4fc !important;
+            border-color: #9eeaf9 !important;
+            color: #055160 !important;
+        }
+
+        .toast-item.secondary {
+            background: #e2e3e5 !important;
+            border-color: #c4c8cb !important;
+            color: #41464b !important;
+        }
+
+        .toast-icon {
+            width: 30px !important;
+            height: 30px !important;
+            display: grid !important;
+            place-items: center !important;
+            border-radius: 999px !important;
+            background: rgba(255,255,255,.55) !important;
+            color: currentColor !important;
+            font-weight: 950 !important;
+            font-size: 16px !important;
+            line-height: 1 !important;
+        }
+
+        .toast-content {
+            min-width: 0 !important;
+        }
+
+        .toast-title {
+            margin: 0 !important;
+            font-weight: 900 !important;
+            font-size: 14px !important;
+            line-height: 1.25 !important;
+            color: currentColor !important;
+        }
+
+        .toast-message {
+            margin-top: 3px !important;
+            color: currentColor !important;
+            opacity: .84 !important;
+            font-size: 13px !important;
+            line-height: 1.45 !important;
+        }
+
+        .toast-close {
+            width: 24px !important;
+            height: 24px !important;
+            border: 0 !important;
+            background: transparent !important;
+            color: currentColor !important;
+            opacity: .62 !important;
+            cursor: pointer !important;
+            font-size: 24px !important;
+            line-height: 1 !important;
+            padding: 0 !important;
+        }
+
+        .toast-close:hover {
+            opacity: 1 !important;
+        }
+
+        .form-grid-uniform {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            align-items: start;
+        }
+
+        .form-grid-uniform .form-group {
+            margin-top: 0;
+        }
+
+        .form-grid-uniform .span-2 {
+            grid-column: span 2;
+        }
+
+        .form-grid-uniform .span-3 {
+            grid-column: span 3;
+        }
+
+        .form-grid-uniform .input,
+        .form-grid-uniform select.input {
+            min-height: 46px;
+        }
+
+        .inline-error-source {
+            display: none !important;
+        }
+
+        @media (max-width: 1100px) {
+            .form-grid-uniform {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .form-grid-uniform .span-2,
+            .form-grid-uniform .span-3 {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .form-grid-uniform {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid-uniform .span-2,
+            .form-grid-uniform .span-3 {
+                grid-column: span 1;
+            }
+        }
+
     </style>
 </head>
 <body>
     <div id="app-content">
         {{ $slot ?? '' }}
         @yield('content')
+    </div>
+
+    <div class="toast-stack" id="toast-stack"></div>
+
+    <div class="confirm-backdrop" id="confirm-backdrop" aria-hidden="true">
+        <div class="confirm-card">
+            <h2 id="confirm-title" style="margin:0; font-size:20px;">Confirmar acción</h2>
+            <p id="confirm-message" class="muted" style="line-height:1.55; margin:10px 0 0;">Esta acción requiere confirmación.</p>
+
+            <div class="confirm-actions">
+                <button class="btn" style="background:#eef2f7;" type="button" id="confirm-cancel">Cancelar</button>
+                <button class="btn" style="background:#fee2e2; color:var(--danger);" type="button" id="confirm-accept">Confirmar</button>
+            </div>
+        </div>
     </div>
 
     <div class="page-loader" id="page-loader" aria-live="polite" aria-hidden="true">
@@ -551,13 +877,94 @@
             const loader = document.getElementById('page-loader');
             const loaderText = document.getElementById('page-loader-text');
             const loaderSubtext = document.getElementById('page-loader-subtext');
-            const appContent = document.getElementById('app-content');
+            const toastStack = document.getElementById('toast-stack');
+            const confirmBackdrop = document.getElementById('confirm-backdrop');
+            const confirmTitle = document.getElementById('confirm-title');
+            const confirmMessage = document.getElementById('confirm-message');
+            const confirmCancel = document.getElementById('confirm-cancel');
+            const confirmAccept = document.getElementById('confirm-accept');
 
             let softNavInProgress = false;
             let loaderHideTimer = null;
+            let pendingConfirmForm = null;
 
             function currentMain() {
                 return document.querySelector('#app-content .main');
+            }
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function toastIcon(type) {
+                return {
+                    success: '✓',
+                    error: '!',
+                    danger: '!',
+                    warning: '!',
+                    info: 'i',
+                    primary: 'i',
+                    secondary: '•'
+                }[type] || 'i';
+            }
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function toastIcon(type) {
+                return {
+                    success: '✓',
+                    error: '!',
+                    danger: '!',
+                    warning: '!',
+                    info: 'i',
+                    primary: 'i',
+                    secondary: '•'
+                }[type] || 'i';
+            }
+
+            function showToast(type, title, message) {
+                if (!toastStack || !message) return;
+
+                const normalizedType = type || 'success';
+                const toast = document.createElement('div');
+                toast.className = 'toast-item ' + normalizedType;
+                toast.innerHTML = `
+                    <div class="toast-icon">${toastIcon(normalizedType)}</div>
+                    <div class="toast-content">
+                        <div class="toast-title">${escapeHtml(title || 'Notificación')}</div>
+                        <div class="toast-message">${escapeHtml(message)}</div>
+                    </div>
+                    <button class="toast-close" type="button" aria-label="Cerrar notificación">×</button>
+                `;
+
+                const closeButton = toast.querySelector('.toast-close');
+
+                function dismiss() {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-6px)';
+                    toast.style.transition = 'opacity .18s ease, transform .18s ease';
+
+                    window.setTimeout(function () {
+                        toast.remove();
+                    }, 220);
+                }
+
+                closeButton?.addEventListener('click', dismiss);
+
+                toastStack.appendChild(toast);
+                window.setTimeout(dismiss, 3800);
             }
 
             function showLoader(text = 'Cargando', subtext = '') {
@@ -639,19 +1046,73 @@
 
                 document.querySelectorAll('.sidebar .nav-link[href]').forEach(function (link) {
                     const linkPath = new URL(link.href, window.location.origin).pathname;
-                    const isAgencies = path.startsWith('/agencies') && linkPath === '/agencies';
+
+                    const isSection = (
+                        (path.startsWith('/agencies') && linkPath === '/agencies') ||
+                        (path.startsWith('/users') && linkPath === '/users')
+                    );
+
                     const isExact = path === linkPath;
 
-                    link.classList.toggle('active', isExact || isAgencies);
+                    link.classList.toggle('active', isExact || isSection);
                 });
+            }
+
+            function collectToastsFromDocument(doc) {
+                const sources = doc.querySelectorAll('[data-toast-type][data-toast-message]');
+
+                sources.forEach(function (source) {
+                    showToast(
+                        source.dataset.toastType,
+                        source.dataset.toastTitle,
+                        source.dataset.toastMessage
+                    );
+                });
+
+                const errorBox = doc.querySelector('.error-box');
+
+                if (errorBox && errorBox.textContent.trim()) {
+                    showToast('error', 'Revisa la información', errorBox.textContent.trim().replace(/\s+/g, ' '));
+                }
+            }
+
+            async function replaceMainFromResponse(response, fallbackUrl = null, push = true) {
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const nextMain = doc.querySelector('#app-content .main');
+                const existingMain = currentMain();
+
+                if (!nextMain || !existingMain) {
+                    if (fallbackUrl) window.location.href = fallbackUrl;
+                    return false;
+                }
+
+                document.title = doc.title || document.title;
+                existingMain.innerHTML = nextMain.innerHTML;
+
+                const finalUrl = response.url || fallbackUrl;
+
+                if (push && finalUrl) {
+                    history.pushState({ softNav: true }, '', finalUrl);
+                }
+
+                if (finalUrl) {
+                    updateSidebarActive(finalUrl);
+                }
+
+                collectToastsFromDocument(doc);
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                initializePageBehaviors();
+                completeLoader();
+
+                return true;
             }
 
             async function softNavigate(url, push = true) {
                 if (softNavInProgress) return;
 
-                const existingMain = currentMain();
-
-                if (!existingMain) {
+                if (!currentMain()) {
                     window.location.href = url;
                     return;
                 }
@@ -673,31 +1134,54 @@
                         return;
                     }
 
-                    const html = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const nextMain = doc.querySelector('#app-content .main');
-
-                    if (!nextMain) {
-                        window.location.href = url;
-                        return;
-                    }
-
-                    document.title = doc.title || document.title;
-
-                    existingMain.innerHTML = nextMain.innerHTML;
-
-                    if (push) {
-                        history.pushState({ softNav: true }, '', url);
-                    }
-
-                    updateSidebarActive(url);
-                    window.scrollTo({ top: 0, behavior: 'instant' });
-                    initializePageBehaviors();
-                    completeLoader();
+                    await replaceMainFromResponse(response, url, push);
                 } catch (error) {
                     console.error('Soft navigation failed:', error);
                     window.location.href = url;
+                } finally {
+                    softNavInProgress = false;
+                }
+            }
+
+            async function softSubmit(form) {
+                if (softNavInProgress) return;
+
+                const method = (form.querySelector('input[name="_method"]')?.value || form.method || 'GET').toUpperCase();
+                const action = form.action;
+                const bodyMethod = method === 'GET' ? 'GET' : 'POST';
+
+                softNavInProgress = true;
+                showLoader('Cargando');
+
+                try {
+                    const options = {
+                        method: bodyMethod,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'text/html, application/xhtml+xml'
+                        },
+                        credentials: 'same-origin'
+                    };
+
+                    if (bodyMethod !== 'GET') {
+                        options.body = new FormData(form);
+                    }
+
+                    const url = bodyMethod === 'GET'
+                        ? action + '?' + new URLSearchParams(new FormData(form)).toString()
+                        : action;
+
+                    const response = await fetch(url, options);
+
+                    if (!response.ok && response.status !== 422) {
+                        window.location.href = action;
+                        return;
+                    }
+
+                    await replaceMainFromResponse(response, response.url || action, true);
+                } catch (error) {
+                    console.error('Soft submit failed:', error);
+                    form.submit();
                 } finally {
                     softNavInProgress = false;
                 }
@@ -753,16 +1237,77 @@
                 });
             }
 
+            function initializePasswordMatch() {
+                const password = document.querySelector('input[name="password"]');
+                const confirmation = document.querySelector('input[name="password_confirmation"]');
+                const message = document.querySelector('[data-password-match-message]');
+
+                if (!password || !confirmation || !message || confirmation.dataset.matchBound === 'true') return;
+
+                confirmation.dataset.matchBound = 'true';
+
+                function sync() {
+                    if (!password.value && !confirmation.value) {
+                        message.textContent = '';
+                        message.className = 'password-hint';
+                        return;
+                    }
+
+                    if (password.value === confirmation.value) {
+                        message.textContent = 'Las contraseñas coinciden.';
+                        message.className = 'password-hint ok';
+                    } else {
+                        message.textContent = 'Las contraseñas no coinciden.';
+                        message.className = 'password-hint bad';
+                    }
+                }
+
+                password.addEventListener('input', sync);
+                confirmation.addEventListener('input', sync);
+                sync();
+            }
+
+            function initializeConfirmForms() {
+                document.querySelectorAll('form[data-confirm="true"]').forEach(function (form) {
+                    if (form.dataset.confirmBound === 'true') return;
+
+                    form.dataset.confirmBound = 'true';
+
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        pendingConfirmForm = form;
+
+                        confirmTitle.textContent = form.dataset.confirmTitle || 'Confirmar acción';
+                        confirmMessage.textContent = form.dataset.confirmMessage || 'Esta acción requiere confirmación.';
+                        confirmBackdrop.classList.add('is-active');
+                        confirmBackdrop.setAttribute('aria-hidden', 'false');
+                    });
+                });
+            }
+
             function initializePageBehaviors() {
                 initializeAgencyForm();
+                initializePasswordMatch();
+                initializeConfirmForms();
 
                 document.querySelectorAll('form').forEach(function (form) {
                     if (form.dataset.loaderBound === 'true') return;
 
                     form.dataset.loaderBound = 'true';
 
-                    form.addEventListener('submit', function () {
-                        showLoader('Cargando');
+                    form.addEventListener('submit', function (event) {
+                        if (form.dataset.confirm === 'true') {
+                            return;
+                        }
+
+                        if (form.target || form.dataset.noSoftSubmit === 'true') {
+                            showLoader('Cargando');
+                            return;
+                        }
+
+                        event.preventDefault();
+                        softSubmit(form);
                     });
                 });
             }
@@ -774,6 +1319,23 @@
 
                 event.preventDefault();
                 softNavigate(link.href);
+            });
+
+            confirmCancel?.addEventListener('click', function () {
+                pendingConfirmForm = null;
+                confirmBackdrop.classList.remove('is-active');
+                confirmBackdrop.setAttribute('aria-hidden', 'true');
+            });
+
+            confirmAccept?.addEventListener('click', function () {
+                if (!pendingConfirmForm) return;
+
+                const form = pendingConfirmForm;
+                pendingConfirmForm = null;
+                confirmBackdrop.classList.remove('is-active');
+                confirmBackdrop.setAttribute('aria-hidden', 'true');
+
+                softSubmit(form);
             });
 
             window.addEventListener('popstate', function () {
@@ -789,6 +1351,7 @@
             updateSidebarActive(window.location.href);
 
             window.BienestarUI = {
+                showToast,
                 showLoader,
                 completeLoader,
                 hideLoader,
