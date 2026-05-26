@@ -1,0 +1,99 @@
+name: bienestar
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: bienestar_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - bienestar_net
+
+  db:
+    image: mariadb:11.4
+    container_name: bienestar_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - bienestar_dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bienestar_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: bienestar_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - bienestar_redisdata:/data
+    networks:
+      - bienestar_net
+
+  queue_default:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: bienestar_queue_default
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan queue:work redis --queue=default --sleep=3 --tries=3 --timeout=120
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      app:
+        condition: service_started
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
+    networks:
+      - bienestar_net
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: bienestar_scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      app:
+        condition: service_started
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - bienestar_net
+
+volumes:
+  bienestar_dbdata:
+    name: bienestar_dbdata
+  bienestar_redisdata:
+    name: bienestar_redisdata
+
+networks:
+  bienestar_net:
+    name: bienestar_net
+    driver: bridge
