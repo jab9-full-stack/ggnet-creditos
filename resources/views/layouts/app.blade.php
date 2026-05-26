@@ -834,6 +834,159 @@
             }
         }
 
+
+        /* BIENESTAR · Layout interno sin romper menú */
+        .app-shell {
+            height: 100vh !important;
+            min-height: 100vh !important;
+            overflow: hidden !important;
+        }
+
+        .sidebar {
+            height: 100vh !important;
+            overflow: hidden !important;
+        }
+
+        .main {
+            height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            scrollbar-gutter: stable;
+        }
+
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .table-scroll table {
+            min-width: 980px;
+        }
+
+        @media (max-width: 900px) {
+            .app-shell {
+                height: auto !important;
+                min-height: 100vh !important;
+                overflow: visible !important;
+            }
+
+            .sidebar {
+                height: auto !important;
+                overflow: visible !important;
+            }
+
+            .main {
+                height: auto !important;
+                overflow: visible !important;
+            }
+        }
+
+
+        /* BIENESTAR · tablas administrativas y modal de auditoría */
+        .app-shell {
+            height: 100vh !important;
+            min-height: 100vh !important;
+            overflow: hidden !important;
+        }
+
+        .sidebar {
+            height: 100vh !important;
+            min-height: 100vh !important;
+            overflow: hidden !important;
+        }
+
+        .main {
+            height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            scrollbar-gutter: stable;
+        }
+
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .table-scroll table {
+            min-width: 980px;
+        }
+
+        .compact-table th,
+        .compact-table td {
+            vertical-align: top;
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        .audit-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 9997;
+            display: none;
+            place-items: center;
+            padding: 22px;
+            background: rgba(15,23,42,.48);
+            backdrop-filter: blur(3px);
+        }
+
+        .audit-modal-backdrop.is-active {
+            display: grid;
+        }
+
+        .audit-modal-card {
+            width: min(100%, 860px);
+            max-height: min(86vh, 760px);
+            overflow: auto;
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            box-shadow: 0 24px 80px rgba(15,23,42,.28);
+            padding: 24px;
+        }
+
+        .audit-detail-grid {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .audit-detail-row {
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: #f8fafc;
+        }
+
+        .audit-technical {
+            white-space: pre-wrap;
+            max-height: 260px;
+            overflow: auto;
+            font-size: 12px;
+            background: #0f172a;
+            color: #e5e7eb;
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .app-shell {
+                height: auto !important;
+                min-height: 100vh !important;
+                overflow: visible !important;
+            }
+
+            .sidebar {
+                height: auto !important;
+                min-height: auto !important;
+                overflow: visible !important;
+            }
+
+            .main {
+                height: auto !important;
+                overflow: visible !important;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -855,6 +1008,27 @@
             </div>
         </div>
     </div>
+
+
+    <div class="audit-modal-backdrop" id="audit-modal" aria-hidden="true">
+        <div class="audit-modal-card">
+            <div style="display:flex; justify-content:space-between; gap:16px; align-items:flex-start;">
+                <div>
+                    <h2 id="audit-modal-title" style="margin:0; font-size:20px;">Detalle de auditoría</h2>
+                    <p class="muted" style="margin:6px 0 0;">Resumen legible del evento registrado.</p>
+                </div>
+                <button class="btn" style="background:#eef2f7;" type="button" id="audit-modal-close">Cerrar</button>
+            </div>
+
+            <div id="audit-modal-body" class="audit-detail-grid"></div>
+
+            <details style="margin-top:16px;">
+                <summary style="cursor:pointer; font-weight:800;">Detalles técnicos</summary>
+                <pre id="audit-modal-technical" class="audit-technical"></pre>
+            </details>
+        </div>
+    </div>
+
 
     <div class="page-loader" id="page-loader" aria-live="polite" aria-hidden="true">
         <div class="loader-core">
@@ -883,6 +1057,11 @@
             const confirmMessage = document.getElementById('confirm-message');
             const confirmCancel = document.getElementById('confirm-cancel');
             const confirmAccept = document.getElementById('confirm-accept');
+            const auditModal = document.getElementById('audit-modal');
+            const auditModalTitle = document.getElementById('audit-modal-title');
+            const auditModalBody = document.getElementById('audit-modal-body');
+            const auditModalTechnical = document.getElementById('audit-modal-technical');
+            const auditModalClose = document.getElementById('audit-modal-close');
 
             let softNavInProgress = false;
             let loaderHideTimer = null;
@@ -1049,7 +1228,9 @@
 
                     const isSection = (
                         (path.startsWith('/agencies') && linkPath === '/agencies') ||
-                        (path.startsWith('/users') && linkPath === '/users')
+                        (path.startsWith('/users') && linkPath === '/users') ||
+                        (path.startsWith('/audit-logs') && linkPath === '/audit-logs') ||
+                        (path.startsWith('/settings') && linkPath === '/settings')
                     );
 
                     const isExact = path === linkPath;
@@ -1267,6 +1448,63 @@
                 sync();
             }
 
+            function safeJsonParse(value, fallback = []) {
+                try {
+                    return JSON.parse(value || '[]');
+                } catch (error) {
+                    return fallback;
+                }
+            }
+
+            function initializeAuditDetails() {
+                document.querySelectorAll('[data-audit-detail="true"]').forEach(function (button) {
+                    if (button.dataset.auditBound === 'true') return;
+
+                    button.dataset.auditBound = 'true';
+
+                    button.addEventListener('click', function () {
+                        const changes = safeJsonParse(button.dataset.changes, []);
+                        const context = safeJsonParse(button.dataset.context, []);
+
+                        auditModalTitle.textContent = button.dataset.title || 'Detalle de auditoría';
+                        auditModalTechnical.textContent = button.dataset.payload || '{}';
+
+                        const parts = [];
+
+                        if (changes.length) {
+                            parts.push('<h3 style="margin:0;">Cambios registrados</h3>');
+                            changes.forEach(function (item) {
+                                parts.push(`
+                                    <div class="audit-detail-row">
+                                        <strong>${escapeHtml(item.field)}</strong>
+                                        <div class="muted">Antes: ${escapeHtml(item.old)}</div>
+                                        <div>Después: ${escapeHtml(item.new)}</div>
+                                    </div>
+                                `);
+                            });
+                        } else {
+                            parts.push('<p class="muted">No hubo cambios de valores comparables registrados.</p>');
+                        }
+
+                        if (context.length) {
+                            parts.push('<h3 style="margin:8px 0 0;">Contexto operativo</h3>');
+                            context.forEach(function (item) {
+                                parts.push(`
+                                    <div class="audit-detail-row">
+                                        <strong>${escapeHtml(item.field)}</strong>
+                                        <div>${escapeHtml(item.value)}</div>
+                                    </div>
+                                `);
+                            });
+                        }
+
+                        auditModalBody.innerHTML = parts.join('');
+                        auditModal.classList.add('is-active');
+                        auditModal.setAttribute('aria-hidden', 'false');
+                    });
+                });
+            }
+
             function initializeConfirmForms() {
                 document.querySelectorAll('form[data-confirm="true"]').forEach(function (form) {
                     if (form.dataset.confirmBound === 'true') return;
@@ -1289,6 +1527,7 @@
             function initializePageBehaviors() {
                 initializeAgencyForm();
                 initializePasswordMatch();
+                initializeAuditDetails();
                 initializeConfirmForms();
 
                 document.querySelectorAll('form').forEach(function (form) {
@@ -1319,6 +1558,18 @@
 
                 event.preventDefault();
                 softNavigate(link.href);
+            });
+
+            auditModalClose?.addEventListener('click', function () {
+                auditModal.classList.remove('is-active');
+                auditModal.setAttribute('aria-hidden', 'true');
+            });
+
+            auditModal?.addEventListener('click', function (event) {
+                if (event.target === auditModal) {
+                    auditModal.classList.remove('is-active');
+                    auditModal.setAttribute('aria-hidden', 'true');
+                }
             });
 
             confirmCancel?.addEventListener('click', function () {

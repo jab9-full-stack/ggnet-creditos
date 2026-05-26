@@ -20,7 +20,13 @@
             <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">Usuarios</a>
         @endcan
 
-        <span class="nav-link" style="opacity:.45; cursor:not-allowed;">Auditoría</span>
+        @can('audit_logs.view')
+            <a class="nav-link {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}" href="{{ route('audit-logs.index') }}">Auditoría</a>
+        @endcan
+
+        @can('settings.view')
+            <a class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">Configuración</a>
+        @endcan
     </nav>
 
     <form method="POST" action="{{ route('logout') }}" style="margin-top:auto;">
