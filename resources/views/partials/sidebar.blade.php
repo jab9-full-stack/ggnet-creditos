@@ -21,11 +21,11 @@
         @endcan
 
         @can('audit_logs.view')
-            <a class="nav-link {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}" href="{{ route('audit-logs.index') }}">Auditoría</a>
+            <a class="nav-link {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}" href="{{ route('audit-logs.index') }}">Bitácora</a>
         @endcan
 
         @can('settings.view')
-            <a class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">Configuración</a>
+            <a class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">Parámetros</a>
         @endcan
     </nav>
 

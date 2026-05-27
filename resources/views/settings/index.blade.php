@@ -7,7 +7,7 @@
     <main class="main">
         <header class="topbar">
             <div>
-                <h1 class="page-title">Configuración</h1>
+                <h1 class="page-title">Parámetros del sistema</h1>
                 <p class="page-subtitle">Parámetros globales del sistema. Los bloqueados se muestran solo como referencia.</p>
             </div>
         </header>
@@ -42,7 +42,7 @@
             </div>
         </section>
 
-        <section class="panel">
+        <section class="panel admin-desktop-only">
             <div class="panel-body">
                 <div class="table-scroll">
                     <table class="table compact-table">
@@ -61,69 +61,71 @@
                             @forelse ($settings as $setting)
                                 @php
                                     $displayValue = \App\Support\Settings\SettingPresenter::displayValue($setting);
+                                    $formId = 'setting-form-'.$setting->id;
                                 @endphp
 
                                 <tr>
-                                    <form method="POST" action="{{ route('settings.update', $setting) }}">
-                                        @csrf
-                                        @method('PUT')
+                                    <td style="min-width:300px;">
+                                        <strong>{{ \App\Support\Settings\SettingPresenter::title($setting) }}</strong>
+                                        <div class="muted" style="max-width:520px;">
+                                            {{ \App\Support\Settings\SettingPresenter::help($setting) }}
+                                        </div>
+                                        <details style="margin-top:4px;">
+                                            <summary class="muted" style="cursor:pointer;">Clave técnica</summary>
+                                            <code>{{ $setting->key }}</code>
+                                        </details>
 
-                                        <td style="min-width:300px;">
-                                            <strong>{{ \App\Support\Settings\SettingPresenter::title($setting) }}</strong>
-                                            <div class="muted" style="max-width:520px;">
-                                                {{ \App\Support\Settings\SettingPresenter::help($setting) }}
-                                            </div>
-                                            <details style="margin-top:4px;">
-                                                <summary class="muted" style="cursor:pointer;">Clave técnica</summary>
-                                                <code>{{ $setting->key }}</code>
-                                            </details>
-                                        </td>
+                                        <form id="{{ $formId }}" method="POST" action="{{ route('settings.update', $setting) }}">
+                                            @csrf
+                                            @method('PUT')
+                                        </form>
+                                    </td>
 
-                                        <td>{{ \App\Support\Settings\SettingPresenter::groupLabel($setting->group) }}</td>
+                                    <td>{{ \App\Support\Settings\SettingPresenter::groupLabel($setting->group) }}</td>
 
-                                        <td style="min-width:230px;">
-                                            <input
-                                                class="input"
-                                                name="value"
-                                                value="{{ old('value', $displayValue) }}"
-                                                @disabled($setting->is_locked)
-                                            >
-                                        </td>
+                                    <td style="min-width:230px;">
+                                        <input
+                                            form="{{ $formId }}"
+                                            class="input"
+                                            name="value"
+                                            value="{{ old('value', $displayValue) }}"
+                                            @disabled($setting->is_locked)
+                                        >
+                                    </td>
 
-                                        <td style="min-width:180px;">
-                                            <select class="input" name="type" @disabled($setting->is_locked)>
-                                                @foreach (['string', 'integer', 'boolean', 'decimal', 'json'] as $type)
-                                                    <option value="{{ $type }}" @selected($setting->type === $type)>
-                                                        {{ \App\Support\Settings\SettingPresenter::typeLabel($type) }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </td>
+                                    <td style="min-width:180px;">
+                                        <select form="{{ $formId }}" class="input" name="type" @disabled($setting->is_locked)>
+                                            @foreach (['string', 'integer', 'boolean', 'decimal', 'json'] as $type)
+                                                <option value="{{ $type }}" @selected($setting->type === $type)>
+                                                    {{ \App\Support\Settings\SettingPresenter::typeLabel($type) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </td>
 
-                                        <td>
-                                            <input type="checkbox" name="is_public" value="1" @checked($setting->is_public) @disabled($setting->is_locked)>
-                                        </td>
+                                    <td>
+                                        <input form="{{ $formId }}" type="checkbox" name="is_public" value="1" @checked($setting->is_public) @disabled($setting->is_locked)>
+                                    </td>
 
-                                        <td>
-                                            @if ($setting->is_locked)
-                                                <span style="color:var(--warning); font-weight:900;">Bloqueado</span>
+                                    <td>
+                                        @if ($setting->is_locked)
+                                            <span style="color:var(--warning); font-weight:900;">Bloqueado</span>
+                                        @else
+                                            <span style="color:var(--success); font-weight:900;">Editable</span>
+                                        @endif
+                                    </td>
+
+                                    <td style="text-align:right;">
+                                        @if ($setting->is_locked)
+                                            <span class="muted">Sin acciones</span>
+                                        @else
+                                            @can('settings.update')
+                                                <button form="{{ $formId }}" class="btn btn-primary" type="submit">Guardar</button>
                                             @else
-                                                <span style="color:var(--success); font-weight:900;">Editable</span>
-                                            @endif
-                                        </td>
-
-                                        <td style="text-align:right;">
-                                            @if ($setting->is_locked)
-                                                <span class="muted">Sin acciones</span>
-                                            @else
-                                                @can('settings.update')
-                                                    <button class="btn btn-primary" type="submit">Guardar</button>
-                                                @else
-                                                    <span class="muted">Sin permisos</span>
-                                                @endcan
-                                            @endif
-                                        </td>
-                                    </form>
+                                                <span class="muted">Sin permisos</span>
+                                            @endcan
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -137,6 +139,98 @@
                 <div style="margin-top:18px;">
                     {{ $settings->links() }}
                 </div>
+            </div>
+        </section>
+
+        <section class="admin-mobile-only">
+            @forelse ($settings as $setting)
+                @php
+                    $displayValue = \App\Support\Settings\SettingPresenter::displayValue($setting);
+                @endphp
+
+                <article class="mobile-card">
+                    <form method="POST" action="{{ route('settings.update', $setting) }}">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="mobile-card-title">
+                            {{ \App\Support\Settings\SettingPresenter::title($setting) }}
+                        </div>
+
+                        <div class="mobile-card-subtitle">
+                            {{ \App\Support\Settings\SettingPresenter::help($setting) }}
+                        </div>
+
+                        <div class="mobile-card-grid">
+                            <div>
+                                <span class="mobile-field-label">Grupo</span>
+                                <span class="mobile-field-value">{{ \App\Support\Settings\SettingPresenter::groupLabel($setting->group) }}</span>
+                            </div>
+
+                            <div>
+                                <span class="mobile-field-label">Estado</span>
+                                <span class="mobile-field-value">
+                                    @if ($setting->is_locked)
+                                        <span style="color:var(--warning);">Bloqueado</span>
+                                    @else
+                                        <span style="color:var(--success);">Editable</span>
+                                    @endif
+                                </span>
+                            </div>
+
+                            <label class="form-group">
+                                <span class="label">Valor</span>
+                                <input
+                                    class="input"
+                                    name="value"
+                                    value="{{ old('value', $displayValue) }}"
+                                    @disabled($setting->is_locked)
+                                >
+                            </label>
+
+                            <label class="form-group">
+                                <span class="label">Tipo</span>
+                                <select class="input" name="type" @disabled($setting->is_locked)>
+                                    @foreach (['string', 'integer', 'boolean', 'decimal', 'json'] as $type)
+                                        <option value="{{ $type }}" @selected($setting->type === $type)>
+                                            {{ \App\Support\Settings\SettingPresenter::typeLabel($type) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </label>
+
+                            <label style="display:flex; align-items:center; gap:10px;">
+                                <input type="checkbox" name="is_public" value="1" @checked($setting->is_public) @disabled($setting->is_locked)>
+                                <span class="label">Visible públicamente dentro del sistema</span>
+                            </label>
+                        </div>
+
+                        <details style="margin-top:12px;">
+                            <summary class="muted" style="cursor:pointer;">Clave técnica</summary>
+                            <code>{{ $setting->key }}</code>
+                        </details>
+
+                        <div class="mobile-card-actions">
+                            @if ($setting->is_locked)
+                                <span class="muted">Sin acciones</span>
+                            @else
+                                @can('settings.update')
+                                    <button class="btn btn-primary" type="submit">Guardar</button>
+                                @else
+                                    <span class="muted">Sin permisos</span>
+                                @endcan
+                            @endif
+                        </div>
+                    </form>
+                </article>
+            @empty
+                <section class="panel">
+                    <div class="panel-body muted">No hay settings registrados.</div>
+                </section>
+            @endforelse
+
+            <div style="margin-top:18px;">
+                {{ $settings->links() }}
             </div>
         </section>
     </main>

@@ -987,9 +987,873 @@
             }
         }
 
+
+        /* BIENESTAR · Responsive shell final */
+        .mobile-topbar {
+            display: none;
+        }
+
+        .mobile-menu-button {
+            border: 0;
+            border-radius: 14px;
+            padding: 10px 12px;
+            background: #0f766e;
+            color: white;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(15, 118, 110, .22);
+        }
+
+        .mobile-backdrop {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            .mobile-topbar {
+                position: sticky;
+                top: 0;
+                z-index: 80;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                min-height: 64px;
+                padding: 12px 16px;
+                background: rgba(255,255,255,.94);
+                border-bottom: 1px solid var(--line);
+                backdrop-filter: blur(14px);
+            }
+
+            .mobile-topbar-brand {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 0;
+                font-weight: 900;
+            }
+
+            .mobile-topbar-brand span {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .app-shell {
+                display: block !important;
+                height: auto !important;
+                min-height: 100vh !important;
+                overflow: visible !important;
+            }
+
+            .sidebar {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                bottom: 0 !important;
+                z-index: 100 !important;
+                width: min(86vw, 320px) !important;
+                height: 100vh !important;
+                min-height: 100vh !important;
+                overflow-y: auto !important;
+                transform: translateX(-105%);
+                transition: transform .2s ease;
+                box-shadow: 24px 0 70px rgba(15,23,42,.28);
+            }
+
+            body.sidebar-open .sidebar {
+                transform: translateX(0);
+            }
+
+            .mobile-backdrop {
+                position: fixed;
+                inset: 0;
+                z-index: 90;
+                display: block;
+                background: rgba(15,23,42,.42);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity .18s ease;
+                backdrop-filter: blur(2px);
+            }
+
+            body.sidebar-open .mobile-backdrop {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .main {
+                height: auto !important;
+                min-height: calc(100vh - 64px) !important;
+                overflow: visible !important;
+                padding: 18px !important;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .panel-body {
+                padding: 18px;
+            }
+
+            .grid-3,
+            .form-grid-uniform {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+
+            .form-grid-uniform .span-2,
+            .form-grid-uniform .span-3 {
+                grid-column: span 2 !important;
+            }
+
+            .table-scroll {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .page-loader {
+                left: 0 !important;
+                top: 64px !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .mobile-topbar {
+                padding: 10px 12px;
+            }
+
+            .main {
+                padding: 14px !important;
+            }
+
+            .auth-shell {
+                grid-template-columns: 1fr !important;
+            }
+
+            .auth-brand {
+                min-height: auto;
+                padding: 28px 20px;
+            }
+
+            .auth-card-wrap {
+                padding: 20px 14px;
+            }
+
+            .auth-card {
+                border-radius: 22px;
+                padding: 24px;
+            }
+
+            .grid-3,
+            .form-grid-uniform {
+                grid-template-columns: 1fr !important;
+            }
+
+            .form-grid-uniform .span-2,
+            .form-grid-uniform .span-3 {
+                grid-column: span 1 !important;
+            }
+
+            .topbar {
+                gap: 12px;
+                margin-bottom: 18px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .panel {
+                border-radius: 18px;
+            }
+
+            .panel-body {
+                padding: 14px;
+            }
+
+            .btn {
+                min-height: 42px;
+            }
+
+            form[method="GET"] {
+                flex-wrap: wrap;
+            }
+
+            form[method="GET"] .input,
+            form[method="GET"] .btn {
+                width: 100%;
+                max-width: 100% !important;
+            }
+
+            .toast-stack {
+                top: 76px !important;
+                left: 12px !important;
+                right: 12px !important;
+                width: auto !important;
+            }
+
+            .confirm-card,
+            .audit-modal-card {
+                border-radius: 20px;
+                padding: 18px;
+            }
+        }
+
+
+        /* BIENESTAR · Mobile polish final */
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden !important;
+        }
+
+        #app-content {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-topbar {
+                left: 0;
+                right: 0;
+                width: 100%;
+                max-width: 100vw;
+                padding: 10px 12px !important;
+            }
+
+            .mobile-menu-button {
+                width: 42px;
+                height: 42px;
+                min-width: 42px;
+                display: inline-grid;
+                place-items: center;
+                gap: 4px;
+                padding: 0 !important;
+                border-radius: 12px;
+                background: #0f766e;
+            }
+
+            .mobile-menu-button span {
+                display: block;
+                width: 18px;
+                height: 2px;
+                border-radius: 999px;
+                background: white;
+            }
+
+            .mobile-topbar-brand {
+                flex: 1;
+                justify-content: flex-end;
+                min-width: 0;
+                text-align: right;
+                font-size: 13px;
+            }
+
+            .mobile-topbar-brand span {
+                max-width: calc(100vw - 96px);
+            }
+
+            .app-shell {
+                width: 100% !important;
+                max-width: 100vw !important;
+                overflow-x: hidden !important;
+            }
+
+            .main {
+                width: 100% !important;
+                max-width: 100vw !important;
+                overflow-x: hidden !important;
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+
+            .panel,
+            .metric,
+            .auth-card {
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .panel-body {
+                max-width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table-scroll {
+                max-width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                width: 100%;
+            }
+
+            .compact-table,
+            .table-scroll table {
+                min-width: 760px;
+            }
+
+            .topbar > div,
+            .page-subtitle {
+                max-width: 100%;
+            }
+
+            .page-subtitle {
+                overflow-wrap: anywhere;
+            }
+
+            .grid,
+            .grid-3 {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .mobile-topbar-brand {
+                font-size: 12px;
+            }
+
+            .mobile-topbar-brand .logo-mark {
+                width: 32px !important;
+                height: 32px !important;
+            }
+
+            .main {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+
+            .metric {
+                min-height: 96px;
+            }
+
+            .compact-table,
+            .table-scroll table,
+            .panel-body > .table {
+                min-width: 720px;
+            }
+
+            .panel-body > .table {
+                display: table;
+            }
+        }
+
+
+        /* BIENESTAR · Mobile UI tipo cards, no tablas apretadas */
+        .mobile-list {
+            display: none;
+        }
+
+        .mobile-card {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 12px 28px rgba(15,23,42,.055);
+        }
+
+        .mobile-card + .mobile-card {
+            margin-top: 12px;
+        }
+
+        .mobile-card-title {
+            font-weight: 900;
+            font-size: 15px;
+            line-height: 1.25;
+        }
+
+        .mobile-card-subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 3px;
+            overflow-wrap: anywhere;
+        }
+
+        .mobile-card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .mobile-field-label {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .mobile-field-value {
+            display: block;
+            margin-top: 3px;
+            font-size: 13px;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .mobile-card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        @media (max-width: 760px) {
+            .desktop-table {
+                display: none !important;
+            }
+
+            .mobile-list {
+                display: block;
+            }
+
+            .mobile-card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mobile-card-actions .btn,
+            .mobile-card-actions form,
+            .mobile-card-actions button {
+                width: 100%;
+            }
+
+            .mobile-topbar {
+                height: 58px !important;
+                min-height: 58px !important;
+                padding: 8px 14px !important;
+                justify-content: space-between !important;
+                background: rgba(255,255,255,.96) !important;
+                box-shadow: 0 8px 22px rgba(15,23,42,.08);
+            }
+
+            .mobile-menu-button {
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+                border-radius: 12px !important;
+                background: white !important;
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: 0 6px 18px rgba(15,23,42,.08) !important;
+            }
+
+            .mobile-menu-button span {
+                width: 17px !important;
+                height: 2px !important;
+                background: #0f172a !important;
+            }
+
+            .mobile-topbar-brand {
+                justify-content: flex-end !important;
+                font-size: 12px !important;
+                font-weight: 900 !important;
+            }
+
+            .mobile-topbar-brand .logo-mark {
+                width: 30px !important;
+                height: 30px !important;
+                border-radius: 10px !important;
+                font-size: 12px !important;
+            }
+
+            .main {
+                padding-top: 16px !important;
+                padding-left: 14px !important;
+                padding-right: 14px !important;
+                max-width: 100vw !important;
+            }
+
+            .topbar {
+                margin-bottom: 16px !important;
+            }
+
+            .topbar .btn {
+                width: auto;
+            }
+
+            .panel-body {
+                overflow: visible !important;
+            }
+
+            .table-scroll {
+                overflow: visible !important;
+            }
+
+            .metric {
+                min-height: 104px;
+            }
+
+            .toast-stack {
+                top: 70px !important;
+            }
+        }
+
+
+        /* BIENESTAR · Mobile header final */
+        @media (max-width: 1024px) {
+            .mobile-topbar {
+                position: sticky !important;
+                top: 0 !important;
+                z-index: 200 !important;
+                height: 56px !important;
+                min-height: 56px !important;
+                width: 100% !important;
+                max-width: 100vw !important;
+                padding: 8px 14px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                background: rgba(255,255,255,.96) !important;
+                border-bottom: 1px solid rgba(203,213,225,.8) !important;
+                box-shadow: 0 8px 24px rgba(15,23,42,.08) !important;
+                backdrop-filter: blur(14px) !important;
+            }
+
+            .mobile-menu-button {
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+                padding: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 3px !important;
+                border-radius: 12px !important;
+                border: 1px solid #cbd5e1 !important;
+                background: #ffffff !important;
+                color: #0f172a !important;
+                box-shadow: 0 6px 16px rgba(15,23,42,.08) !important;
+            }
+
+            .mobile-menu-button span {
+                width: 16px !important;
+                height: 2px !important;
+                border-radius: 999px !important;
+                background: #0f172a !important;
+            }
+
+            .mobile-topbar-brand {
+                flex: 0 0 auto !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+                gap: 0 !important;
+                min-width: auto !important;
+            }
+
+            .mobile-topbar-brand span {
+                display: none !important;
+            }
+
+            .mobile-topbar-brand .logo-mark {
+                width: 34px !important;
+                height: 34px !important;
+                border-radius: 12px !important;
+                font-size: 13px !important;
+            }
+
+            .page-loader {
+                top: 56px !important;
+            }
+        }
+
+
+        /* BIENESTAR · Mobile filters and admin cards */
+        @media (max-width: 760px) {
+            .desktop-table {
+                display: none !important;
+            }
+
+            .mobile-list {
+                display: block !important;
+            }
+
+            .mobile-card {
+                width: 100%;
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .mobile-card-actions {
+                align-items: stretch;
+            }
+
+            .mobile-card-actions .btn {
+                justify-content: center;
+            }
+
+            .form-grid-uniform {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+
+            .form-grid-uniform .form-group,
+            .form-grid-uniform .span-2,
+            .form-grid-uniform .span-3 {
+                grid-column: span 1 !important;
+                width: 100%;
+            }
+
+            .panel .panel-body > form[method="GET"] {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+                align-items: stretch !important;
+            }
+
+            .panel .panel-body > form[method="GET"] .input,
+            .panel .panel-body > form[method="GET"] .btn,
+            .panel .panel-body > form[method="GET"] a.btn,
+            .panel .panel-body > form[method="GET"] button {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
+
+
+        /* BIENESTAR · Fix definitivo móvil/tablet */
+        @media (max-width: 1024px) {
+            body {
+                padding-top: 56px !important;
+                overflow-x: hidden !important;
+            }
+
+            .mobile-topbar {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 500 !important;
+                height: 56px !important;
+                min-height: 56px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                padding: 8px 14px !important;
+                background: rgba(255,255,255,.97) !important;
+                border-bottom: 1px solid rgba(203,213,225,.9) !important;
+                box-shadow: 0 8px 24px rgba(15,23,42,.10) !important;
+                backdrop-filter: blur(14px) !important;
+            }
+
+            .mobile-menu-button {
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 3px !important;
+                padding: 0 !important;
+                border-radius: 12px !important;
+                border: 1px solid #cbd5e1 !important;
+                background: #ffffff !important;
+                box-shadow: 0 6px 16px rgba(15,23,42,.08) !important;
+            }
+
+            .mobile-menu-button span {
+                display: block !important;
+                width: 16px !important;
+                height: 2px !important;
+                border-radius: 999px !important;
+                background: #0f172a !important;
+            }
+
+            .mobile-topbar-brand {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-end !important;
+                flex: 0 0 auto !important;
+            }
+
+            .mobile-topbar-brand span {
+                display: none !important;
+            }
+
+            .mobile-topbar-brand .logo-mark {
+                width: 34px !important;
+                height: 34px !important;
+                border-radius: 12px !important;
+                font-size: 13px !important;
+            }
+
+            .sidebar {
+                top: 56px !important;
+                height: calc(100vh - 56px) !important;
+                min-height: calc(100vh - 56px) !important;
+            }
+
+            .mobile-backdrop {
+                top: 56px !important;
+            }
+
+            .main {
+                min-height: calc(100vh - 56px) !important;
+                padding-top: 16px !important;
+            }
+
+            .page-loader {
+                top: 56px !important;
+            }
+
+            .desktop-table {
+                display: none !important;
+            }
+
+            .mobile-list {
+                display: block !important;
+            }
+
+            .table-scroll {
+                overflow: visible !important;
+            }
+
+            .panel-body {
+                overflow: visible !important;
+            }
+
+            .mobile-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+            }
+
+            .mobile-card-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .mobile-card-actions .btn,
+            .mobile-card-actions form,
+            .mobile-card-actions button {
+                width: 100% !important;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            body {
+                padding-top: 0 !important;
+            }
+
+            .desktop-table {
+                display: block;
+            }
+
+            .mobile-list {
+                display: none !important;
+            }
+        }
+
+
+        /* BIENESTAR · Admin responsive definitivo sin doble render visible */
+        .admin-mobile-only {
+            display: none !important;
+        }
+
+        .admin-desktop-only {
+            display: block !important;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-desktop-only {
+                display: none !important;
+            }
+
+            .admin-mobile-only {
+                display: block !important;
+            }
+
+            .admin-mobile-only .mobile-card {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 0 12px 0 !important;
+            }
+
+            .admin-mobile-only .mobile-card-grid {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .admin-desktop-only {
+                display: block !important;
+            }
+
+            .admin-mobile-only {
+                display: none !important;
+            }
+        }
+
+
+        /* BIENESTAR · Loader correcto para login/auth sin sidebar */
+        body.auth-page .page-loader {
+            left: 0 !important;
+            top: 0 !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 100vh !important;
+            bottom: 0 !important;
+        }
+
+        body.auth-page .mobile-topbar,
+        body.auth-page .mobile-backdrop {
+            display: none !important;
+        }
+
+        body.auth-page {
+            padding-top: 0 !important;
+        }
+
+        @media (max-width: 1024px) {
+            body.auth-page .page-loader {
+                left: 0 !important;
+                top: 0 !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
+                height: 100vh !important;
+            }
+        }
+
     </style>
 </head>
-<body>
+<body class="{{ auth()->check() ? 'app-page' : 'auth-page' }}">
+    <div class="mobile-topbar">
+        <button class="mobile-menu-button" type="button" id="mobile-menu-button" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="mobile-topbar-brand" aria-label="BIENESTAR GGNET Créditos">
+            <div class="logo-mark" style="width:34px; height:34px; border-radius:12px;">B</div>
+        </div>
+    </div>
+
+    <div class="mobile-backdrop" id="mobile-backdrop"></div>
+
     <div id="app-content">
         {{ $slot ?? '' }}
         @yield('content')
@@ -1062,6 +1926,8 @@
             const auditModalBody = document.getElementById('audit-modal-body');
             const auditModalTechnical = document.getElementById('audit-modal-technical');
             const auditModalClose = document.getElementById('audit-modal-close');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileBackdrop = document.getElementById('mobile-backdrop');
 
             let softNavInProgress = false;
             let loaderHideTimer = null;
@@ -1524,6 +2390,14 @@
                 });
             }
 
+            function closeMobileMenu() {
+                document.body.classList.remove('sidebar-open');
+            }
+
+            function openMobileMenu() {
+                document.body.classList.add('sidebar-open');
+            }
+
             function initializePageBehaviors() {
                 initializeAgencyForm();
                 initializePasswordMatch();
@@ -1557,6 +2431,7 @@
                 if (!shouldHandleLink(link)) return;
 
                 event.preventDefault();
+                closeMobileMenu();
                 softNavigate(link.href);
             });
 
@@ -1593,8 +2468,25 @@
                 softNavigate(window.location.href, false);
             });
 
+            mobileMenuButton?.addEventListener('click', function () {
+                if (document.body.classList.contains('sidebar-open')) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
+            });
+
+            mobileBackdrop?.addEventListener('click', closeMobileMenu);
+
+            window.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeMobileMenu();
+                }
+            });
+
             window.addEventListener('pageshow', function () {
                 hideLoader();
+                closeMobileMenu();
                 updateSidebarActive(window.location.href);
             });
 

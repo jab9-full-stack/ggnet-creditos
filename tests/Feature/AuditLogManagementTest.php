@@ -64,9 +64,9 @@ class AuditLogManagementTest extends TestCase
         $this->actingAs($user)
             ->get('/audit-logs')
             ->assertStatus(200)
-            ->assertSee('Auditoría')
-            ->assertSee('login')
-            ->assertSee('auth');
+            ->assertSee('Bitácora de seguridad')
+            ->assertSee('Inicio de sesión')
+            ->assertSee('Acceso');
     }
 
     public function test_guest_cannot_access_audit_logs(): void

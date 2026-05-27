@@ -49,80 +49,137 @@
                     @endif
                 </form>
 
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Agencia</th>
-                            <th>Roles</th>
-                            <th>Estado</th>
-                            <th>Último acceso</th>
-                            <th style="text-align:right;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($users as $user)
+                <div class="table-scroll">
+                    <div class="desktop-table table-scroll">
+                    <table class="table compact-table">
+                        <thead>
                             <tr>
-                                <td>
-                                    <strong>{{ $user->name }}</strong>
-                                    <div class="muted">{{ $user->email }}</div>
-                                </td>
-                                <td>
-                                    @if ($user->agency)
-                                        <strong>{{ $user->agency->code }}</strong>
-                                        <div class="muted">{{ $user->agency->name }}</div>
-                                    @else
-                                        <span class="muted">Sin agencia</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @forelse ($user->roles as $role)
-                                        <span style="display:inline-flex; margin:2px; padding:5px 8px; border-radius:999px; background:#eef2f7; font-size:12px; font-weight:800;">
-                                            {{ \App\Support\RoleLabels::label($role->name) }}
-                                        </span>
-                                    @empty
-                                        <span class="muted">Sin roles</span>
-                                    @endforelse
-                                </td>
-                                <td>
-                                    @if ($user->status === 'active' && ! $user->blocked_at)
-                                        <span style="color:var(--success); font-weight:800;">Activo</span>
-                                    @elseif ($user->status === 'blocked')
-                                        <span style="color:var(--danger); font-weight:800;">Bloqueado</span>
-                                        <div class="muted">{{ $user->blocked_reason ?: 'Sin motivo registrado' }}</div>
-                                    @else
-                                        <span style="color:var(--warning); font-weight:800;">Inactivo</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    {{ $user->last_login_at?->format('d/m/Y H:i') ?? '—' }}
-                                    <div class="muted">{{ $user->last_login_ip ?? '' }}</div>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div style="display:flex; justify-content:flex-end; gap:8px;">
-                                        @can('users.update')
-                                            <a class="btn" style="background:#eef2f7;" href="{{ route('users.edit', $user) }}">Editar</a>
-                                        @endcan
+                                <th>Usuario</th>
+                                <th>Agencia</th>
+                                <th>Roles</th>
+                                <th>Estado</th>
+                                <th>Último acceso</th>
+                                <th style="text-align:right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($users as $user)
+                                <tr>
+                                    <td>
+                                        <strong>{{ $user->name }}</strong>
+                                        <div class="muted">{{ $user->email }}</div>
+                                    </td>
+                                    <td>
+                                        @if ($user->agency)
+                                            <strong>{{ $user->agency->code }}</strong>
+                                            <div class="muted">{{ $user->agency->name }}</div>
+                                        @else
+                                            <span class="muted">Sin agencia</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @forelse ($user->roles as $role)
+                                            <span style="display:inline-flex; margin:2px; padding:5px 8px; border-radius:999px; background:#eef2f7; font-size:12px; font-weight:800;">
+                                                {{ \App\Support\RoleLabels::label($role->name) }}
+                                            </span>
+                                        @empty
+                                            <span class="muted">Sin roles</span>
+                                        @endforelse
+                                    </td>
+                                    <td>
+                                        @if ($user->status === 'active' && ! $user->blocked_at)
+                                            <span style="color:var(--success); font-weight:800;">Activo</span>
+                                        @elseif ($user->status === 'blocked')
+                                            <span style="color:var(--danger); font-weight:800;">Bloqueado</span>
+                                            <div class="muted">{{ $user->blocked_reason ?: 'Sin motivo registrado' }}</div>
+                                        @else
+                                            <span style="color:var(--warning); font-weight:800;">Inactivo</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $user->last_login_at?->format('d/m/Y H:i') ?? '—' }}
+                                        <div class="muted">{{ $user->last_login_ip ?? '' }}</div>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                            @can('users.update')
+                                                <a class="btn" style="background:#eef2f7;" href="{{ route('users.edit', $user) }}">Editar</a>
+                                            @endcan
 
-                                        @can('users.delete')
-                                            @unless(auth()->user()->is($user))
-                                                <form method="POST" action="{{ route('users.destroy', $user) }}" data-confirm="true" data-confirm-title="Eliminar usuario" data-confirm-message="Esta acción eliminará el usuario del listado activo. Se conservará auditoría del movimiento.">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn" style="background:#fee2e2; color:var(--danger);" type="submit">Eliminar</button>
-                                                </form>
-                                            @endunless
-                                        @endcan
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="muted">No hay usuarios registrados.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                            @can('users.delete')
+                                                @unless(auth()->user()->is($user))
+                                                    <form method="POST" action="{{ route('users.destroy', $user) }}" data-confirm="true" data-confirm-title="Eliminar usuario" data-confirm-message="Esta acción eliminará el usuario del listado activo. Se conservará auditoría del movimiento.">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn" style="background:#fee2e2; color:var(--danger);" type="submit">Eliminar</button>
+                                                    </form>
+                                                @endunless
+                                            @endcan
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="muted">No hay usuarios registrados.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mobile-list">
+                    @forelse ($users as $user)
+                        <article class="mobile-card">
+                            <div class="mobile-card-title">{{ $user->name }}</div>
+                            <div class="mobile-card-subtitle">{{ $user->email }}</div>
+
+                            <div style="margin-top:10px;">
+                                @if ($user->status === 'active' && ! $user->blocked_at)
+                                    <span style="color:var(--success); font-weight:800;">Activo</span>
+                                @elseif ($user->status === 'blocked')
+                                    <span style="color:var(--danger); font-weight:800;">Bloqueado</span>
+                                @else
+                                    <span style="color:var(--warning); font-weight:800;">Inactivo</span>
+                                @endif
+                            </div>
+
+                            <div class="mobile-card-grid">
+                                <div>
+                                    <span class="mobile-field-label">Agencia</span>
+                                    <span class="mobile-field-value">{{ $user->agency?->name ?? 'Sin agencia' }}</span>
+                                </div>
+                                <div>
+                                    <span class="mobile-field-label">Roles</span>
+                                    <span class="mobile-field-value">
+                                        {{ $user->roles->map(fn($role) => \App\Support\RoleLabels::label($role->name))->implode(', ') ?: 'Sin roles' }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="mobile-field-label">Último acceso</span>
+                                    <span class="mobile-field-value">{{ $user->last_login_at?->format('d/m/Y H:i') ?? '—' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mobile-card-actions">
+                                @can('users.update')
+                                    <a class="btn" style="background:#eef2f7;" href="{{ route('users.edit', $user) }}">Editar</a>
+                                @endcan
+
+                                @can('users.delete')
+                                    @unless(auth()->user()->is($user))
+                                        <form method="POST" action="{{ route('users.destroy', $user) }}" data-confirm="true" data-confirm-title="Eliminar usuario" data-confirm-message="Esta acción eliminará el usuario del listado activo. Se conservará auditoría del movimiento.">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn" style="background:#fee2e2; color:var(--danger);" type="submit">Eliminar</button>
+                                        </form>
+                                    @endunless
+                                @endcan
+                            </div>
+                        </article>
+                    @empty
+                        <p class="muted">No hay usuarios registrados.</p>
+                    @endforelse
+                </div>
 
                 <div style="margin-top:18px;">
                     {{ $users->links() }}

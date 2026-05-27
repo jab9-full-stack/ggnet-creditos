@@ -7,8 +7,8 @@
     <main class="main">
         <header class="topbar">
             <div>
-                <h1 class="page-title">Auditoría</h1>
-                <p class="page-subtitle">Registro de accesos, cambios administrativos y acciones sensibles.</p>
+                <h1 class="page-title">Bitácora de seguridad</h1>
+                <p class="page-subtitle">Registro de accesos, cambios administrativos y acciones sensibles del sistema.</p>
             </div>
         </header>
 
@@ -69,7 +69,7 @@
             </div>
         </section>
 
-        <section class="panel">
+        <section class="panel admin-desktop-only">
             <div class="panel-body">
                 <div class="table-scroll">
                     <table class="table compact-table">
@@ -129,6 +129,71 @@
                 <div style="margin-top:18px;">
                     {{ $logs->links() }}
                 </div>
+            </div>
+        </section>
+
+        <section class="admin-mobile-only">
+            @forelse ($logs as $log)
+                @php
+                    $changes = \App\Support\Audit\AuditLogPresenter::readableChanges($log);
+                    $context = \App\Support\Audit\AuditLogPresenter::readableContext($log);
+                    $payload = \App\Support\Audit\AuditLogPresenter::technicalPayload($log);
+                @endphp
+
+                <article class="mobile-card">
+                    <div class="mobile-card-title">
+                        {{ \App\Support\Audit\AuditLogPresenter::eventLabel($log->event) }}
+                    </div>
+
+                    <div class="mobile-card-subtitle">
+                        {{ $log->created_at?->format('d/m/Y H:i:s') }}
+                    </div>
+
+                    <div class="mobile-card-grid">
+                        <div>
+                            <span class="mobile-field-label">Módulo</span>
+                            <span class="mobile-field-value">{{ \App\Support\Audit\AuditLogPresenter::moduleLabel($log->module) }}</span>
+                        </div>
+
+                        <div>
+                            <span class="mobile-field-label">Usuario</span>
+                            <span class="mobile-field-value">{{ $log->user?->name ?? 'Sistema' }}</span>
+                        </div>
+
+                        <div>
+                            <span class="mobile-field-label">Entidad</span>
+                            <span class="mobile-field-value">{{ \App\Support\Audit\AuditLogPresenter::entityLabel($log) }}</span>
+                        </div>
+
+                        <div>
+                            <span class="mobile-field-label">IP</span>
+                            <span class="mobile-field-value">{{ $log->ip_address ?? '—' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mobile-card-actions">
+                        <button
+                            class="btn"
+                            style="background:#eef2f7;"
+                            type="button"
+                            data-audit-detail="true"
+                            data-title="{{ e(\App\Support\Audit\AuditLogPresenter::summary($log)) }}"
+                            data-changes='@json($changes)'
+                            data-context='@json($context)'
+                            data-payload="{{ e($payload) }}"
+                        >
+                            Ver detalle
+                        </button>
+                    </div>
+                </article>
+            @empty
+                <section class="panel">
+                    <div class="panel-body muted">No hay eventos de auditoría para los filtros seleccionados.</div>
+                </section>
+            @endforelse
+
+            <div style="margin-top:18px;">
+                {{ $logs->links() }}
             </div>
         </section>
     </main>

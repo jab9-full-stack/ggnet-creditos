@@ -40,63 +40,106 @@
                     @endif
                 </form>
 
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Agencia</th>
-                            <th>Contacto</th>
-                            <th>Ubicación</th>
-                            <th>Estado</th>
-                            <th style="text-align:right;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($agencies as $agency)
+                <div class="table-scroll">
+                    <div class="desktop-table table-scroll">
+                    <table class="table compact-table">
+                        <thead>
                             <tr>
-                                <td><strong>{{ $agency->code }}</strong></td>
-                                <td>
-                                    <strong>{{ $agency->name }}</strong>
-                                    <div class="muted">{{ $agency->legal_name ?? '—' }}</div>
-                                </td>
-                                <td>
-                                    <div>{{ $agency->email ?? '—' }}</div>
-                                    <div class="muted">{{ $agency->phone ?? '—' }}</div>
-                                </td>
-                                <td>
-                                    <div>{{ $agency->city ?? '—' }}</div>
-                                    <div class="muted">{{ $agency->department ?? $agency->country }}</div>
-                                </td>
-                                <td>
-                                    @if ($agency->is_active)
-                                        <span style="color:var(--success); font-weight:800;">Activa</span>
-                                    @else
-                                        <span style="color:var(--danger); font-weight:800;">Inactiva</span>
-                                    @endif
-                                </td>
-                                <td style="text-align:right;">
-                                    <div style="display:flex; justify-content:flex-end; gap:8px;">
-                                        @can('agencies.update')
-                                            <a class="btn" style="background:#eef2f7;" href="{{ route('agencies.edit', $agency) }}">Editar</a>
-                                        @endcan
+                                <th>Código</th>
+                                <th>Agencia</th>
+                                <th>Contacto</th>
+                                <th>Ubicación</th>
+                                <th>Estado</th>
+                                <th style="text-align:right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($agencies as $agency)
+                                <tr>
+                                    <td><strong>{{ $agency->code }}</strong></td>
+                                    <td>
+                                        <strong>{{ $agency->name }}</strong>
+                                        <div class="muted">{{ $agency->legal_name ?? '—' }}</div>
+                                    </td>
+                                    <td>
+                                        <div>{{ $agency->email ?? '—' }}</div>
+                                        <div class="muted">{{ $agency->phone ?? '—' }}</div>
+                                    </td>
+                                    <td>
+                                        <div>{{ $agency->city ?? '—' }}</div>
+                                        <div class="muted">{{ $agency->department ?? $agency->country }}</div>
+                                    </td>
+                                    <td>
+                                        @if ($agency->is_active)
+                                            <span style="color:var(--success); font-weight:800;">Activa</span>
+                                        @else
+                                            <span style="color:var(--danger); font-weight:800;">Inactiva</span>
+                                        @endif
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                            @can('agencies.update')
+                                                <a class="btn" style="background:#eef2f7;" href="{{ route('agencies.edit', $agency) }}">Editar</a>
+                                            @endcan
 
-                                        @can('agencies.delete')
-                                            <form method="POST" action="{{ route('agencies.destroy', $agency) }}" data-confirm="true" data-confirm-title="Eliminar agencia" data-confirm-message="Esta acción eliminará la agencia si no tiene usuarios asignados.">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn" style="background:#fee2e2; color:var(--danger);" type="submit">Eliminar</button>
-                                            </form>
-                                        @endcan
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="muted">No hay agencias registradas.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                            @can('agencies.delete')
+                                                <form method="POST" action="{{ route('agencies.destroy', $agency) }}" data-confirm="true" data-confirm-title="Eliminar agencia" data-confirm-message="Esta acción eliminará la agencia si no tiene usuarios asignados.">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn" style="background:#fee2e2; color:var(--danger);" type="submit">Eliminar</button>
+                                                </form>
+                                            @endcan
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="muted">No hay agencias registradas.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mobile-list">
+                    @forelse ($agencies as $agency)
+                        <article class="mobile-card">
+                            <div class="mobile-card-title">{{ $agency->name }}</div>
+                            <div class="mobile-card-subtitle">{{ $agency->email ?? 'Sin correo' }}</div>
+
+                            <div style="margin-top:10px;">
+                                @if ($agency->is_active)
+                                    <span style="color:var(--success); font-weight:800;">Activa</span>
+                                @else
+                                    <span style="color:var(--danger); font-weight:800;">Inactiva</span>
+                                @endif
+                            </div>
+
+                            <div class="mobile-card-grid">
+                                <div><span class="mobile-field-label">Código</span><span class="mobile-field-value">{{ $agency->code }}</span></div>
+                                <div><span class="mobile-field-label">Teléfono</span><span class="mobile-field-value">{{ $agency->phone ?? '—' }}</span></div>
+                                <div><span class="mobile-field-label">Razón social</span><span class="mobile-field-value">{{ $agency->legal_name ?? '—' }}</span></div>
+                                <div><span class="mobile-field-label">Ubicación</span><span class="mobile-field-value">{{ $agency->city ?? '—' }} · {{ $agency->department ?? $agency->country }}</span></div>
+                            </div>
+
+                            <div class="mobile-card-actions">
+                                @can('agencies.update')
+                                    <a class="btn" style="background:#eef2f7;" href="{{ route('agencies.edit', $agency) }}">Editar</a>
+                                @endcan
+
+                                @can('agencies.delete')
+                                    <form method="POST" action="{{ route('agencies.destroy', $agency) }}" data-confirm="true" data-confirm-title="Eliminar agencia" data-confirm-message="Esta acción eliminará la agencia si no tiene usuarios asignados.">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn" style="background:#fee2e2; color:var(--danger);" type="submit">Eliminar</button>
+                                    </form>
+                                @endcan
+                            </div>
+                        </article>
+                    @empty
+                        <p class="muted">No hay agencias registradas.</p>
+                    @endforelse
+                </div>
 
                 <div style="margin-top:18px;">
                     {{ $agencies->links() }}
