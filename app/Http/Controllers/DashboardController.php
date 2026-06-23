@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Agency;
 use App\Models\AuditLog;
 use App\Models\Client;
+use App\Models\ClientDocument;
 use App\Models\ClientReference;
 use App\Models\Setting;
 use App\Models\User;
@@ -22,6 +23,7 @@ class DashboardController extends Controller
                 'agencies' => Agency::query()->count(),
                 'clients' => Client::query()->count(),
                 'client_references' => ClientReference::query()->count(),
+                'client_documents' => ClientDocument::query()->count(),
                 'roles' => Role::query()->count(),
                 'permissions' => Permission::query()->count(),
                 'settings' => Setting::query()->count(),

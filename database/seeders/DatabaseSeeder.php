@@ -56,6 +56,12 @@ class DatabaseSeeder extends Seeder
             'client_references.update',
             'client_references.delete',
 
+            'client_documents.view',
+            'client_documents.create',
+            'client_documents.update',
+            'client_documents.delete',
+            'client_documents.download',
+
             'settings.view',
             'settings.update',
 
@@ -87,6 +93,10 @@ class DatabaseSeeder extends Seeder
                 'settings.view',
                 'settings.update',
                 'audit_logs.view',
+                'client_documents.view',
+                'client_documents.create',
+                'client_documents.update',
+                'client_documents.download',
             ],
             'manager' => [
                 'dashboard.view',
@@ -105,6 +115,8 @@ class DatabaseSeeder extends Seeder
                 'dashboard.view',
                 'clients.view',
                 'client_references.view',
+                'client_documents.view',
+                'client_documents.download',
             ],
             'auditor' => [
                 'dashboard.view',

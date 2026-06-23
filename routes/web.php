@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientDocumentController;
 use App\Http\Controllers\ClientReferenceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
@@ -43,10 +44,21 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('permission:clients.view');
 
 
+
+    Route::get('/clients/{client}/documents/{document}/download', [ClientDocumentController::class, 'download'])
+        ->middleware('permission:client_documents.download')
+        ->name('clients.documents.download');
+
     Route::resource('clients.references', ClientReferenceController::class)
         ->parameters(['references' => 'reference'])
         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('permission:client_references.view');
+
+
+    Route::resource('clients.documents', ClientDocumentController::class)
+        ->parameters(['documents' => 'document'])
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+        ->middleware('permission:client_documents.view');
 
     Route::get('/audit-logs', [AuditLogController::class, 'index'])
         ->middleware('permission:audit_logs.view')

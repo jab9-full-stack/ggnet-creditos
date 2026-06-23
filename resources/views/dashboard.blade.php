@@ -22,6 +22,7 @@
             <div class="metric"><span>Agencias</span><strong>{{ $metrics['agencies'] }}</strong></div>
             <div class="metric"><span>Clientes</span><strong>{{ $metrics['clients'] }}</strong></div>
             <div class="metric"><span>Referencias</span><strong>{{ $metrics['client_references'] }}</strong></div>
+            <div class="metric"><span>Documentos</span><strong>{{ $metrics['client_documents'] }}</strong></div>
             <div class="metric"><span>Roles</span><strong>{{ $metrics['roles'] }}</strong></div>
             <div class="metric"><span>Permisos</span><strong>{{ $metrics['permissions'] }}</strong></div>
             <div class="metric"><span>Settings</span><strong>{{ $metrics['settings'] }}</strong></div>

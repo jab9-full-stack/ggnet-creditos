@@ -118,6 +118,10 @@
                                                 <a class="btn" style="background:#eef2f7;" href="{{ route('clients.references.index', $client) }}">Referencias</a>
                                             @endcan
 
+                                            @can('client_documents.view')
+                                                <a class="btn" style="background:#eef2f7;" href="{{ route('clients.documents.index', $client) }}">Documentos</a>
+                                            @endcan
+
                                             @can('clients.update')
                                                 <a class="btn" style="background:#eef2f7;" href="{{ route('clients.edit', $client) }}">Editar</a>
                                             @endcan
@@ -165,6 +169,10 @@
                             <div class="mobile-card-actions">
                                 @can('client_references.view')
                                     <a class="btn" style="background:#eef2f7;" href="{{ route('clients.references.index', $client) }}">Referencias</a>
+                                @endcan
+
+                                @can('client_documents.view')
+                                    <a class="btn" style="background:#eef2f7;" href="{{ route('clients.documents.index', $client) }}">Documentos</a>
                                 @endcan
 
                                 @can('clients.update')
