@@ -133,7 +133,7 @@
                                     <td style="text-align:right;">
                                         <div style="display:flex; justify-content:flex-end; gap:8px;">
                                             @can('client_documents.download')
-                                                <a class="btn" style="background:#eef2f7;" href="{{ route('clients.documents.download', [$client, $document]) }}">Descargar</a>
+                                                <a class="btn" style="background:#eef2f7;" href="{{ route('clients.documents.download', [$client, $document]) }}" download>Descargar</a>
                                             @endcan
 
                                             @can('client_documents.update')
@@ -184,7 +184,7 @@
 
                             <div class="mobile-card-actions">
                                 @can('client_documents.download')
-                                    <a class="btn" style="background:#eef2f7;" href="{{ route('clients.documents.download', [$client, $document]) }}">Descargar</a>
+                                    <a class="btn" style="background:#eef2f7;" href="{{ route('clients.documents.download', [$client, $document]) }}" download>Descargar</a>
                                 @endcan
 
                                 @can('client_documents.update')
