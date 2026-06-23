@@ -79,6 +79,8 @@ class CreditController extends Controller
             'creditRequest:id,code,status,requested_amount,requested_term_weeks,approved_at',
             'createdBy:id,name,email',
             'approvedBy:id,name,email',
+            'disbursedBy:id,name,email',
+            'installments',
         ]);
 
         $auditLogs = AuditLog::query()

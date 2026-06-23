@@ -8,6 +8,7 @@ use App\Http\Controllers\ClientDocumentController;
 use App\Http\Controllers\ClientReferenceController;
 use App\Http\Controllers\CreditRequestController;
 use App\Http\Controllers\CreditController;
+use App\Http\Controllers\CreditDisbursementController;
 use App\Http\Controllers\CreditRequestStatusController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
@@ -70,6 +71,10 @@ Route::middleware('auth')->group(function (): void {
         ->parameters(['credit-requests' => 'creditRequest'])
         ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('permission:credit_requests.view');
+
+    Route::post('/credits/{credit}/disburse', [CreditDisbursementController::class, 'store'])
+        ->middleware('permission:credits.disburse')
+        ->name('credits.disburse');
 
     Route::resource('credits', CreditController::class)
         ->only(['index', 'show'])

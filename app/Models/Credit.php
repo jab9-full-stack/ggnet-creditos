@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'disbursed_at',
     'created_by',
     'approved_by',
+    'disbursed_by',
     'updated_by',
     'notes',
 ])]
@@ -56,6 +58,11 @@ class Credit extends Model
         return $this->belongsTo(CreditRequest::class);
     }
 
+    public function installments(): HasMany
+    {
+        return $this->hasMany(CreditInstallment::class)->orderBy('number');
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -64,6 +71,11 @@ class Credit extends Model
     public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function disbursedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'disbursed_by');
     }
 
     public function updatedBy(): BelongsTo
@@ -90,6 +102,12 @@ class Credit extends Model
     public function canBeEditedByAdmin(): bool
     {
         return $this->status === self::STATUS_APPROVED_PENDING_DISBURSEMENT;
+    }
+
+    public function canBeDisbursed(): bool
+    {
+        return $this->status === self::STATUS_APPROVED_PENDING_DISBURSEMENT
+            && $this->installments()->doesntExist();
     }
 
     protected function casts(): array
