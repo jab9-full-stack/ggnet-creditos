@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+#[Fillable([
+    'agency_id',
+    'code',
+    'first_name',
+    'middle_name',
+    'last_name',
+    'second_last_name',
+    'married_name',
+    'dpi',
+    'nit',
+    'birth_date',
+    'gender',
+    'phone',
+    'secondary_phone',
+    'email',
+    'address_line',
+    'city',
+    'department',
+    'country',
+    'occupation',
+    'workplace',
+    'status',
+    'notes',
+    'created_by',
+    'updated_by',
+])]
+class Client extends Model
+{
+    use SoftDeletes;
+
+    public function agency(): BelongsTo
+    {
+        return $this->belongsTo(Agency::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function fullName(): string
+    {
+        return collect([
+            $this->first_name,
+            $this->middle_name,
+            $this->last_name,
+            $this->second_last_name,
+            $this->married_name,
+        ])
+            ->filter()
+            ->implode(' ');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'birth_date' => 'date',
+        ];
+    }
+}

@@ -46,6 +46,11 @@ class DatabaseSeeder extends Seeder
             'agencies.update',
             'agencies.delete',
 
+            'clients.view',
+            'clients.create',
+            'clients.update',
+            'clients.delete',
+
             'settings.view',
             'settings.update',
 
@@ -87,9 +92,13 @@ class DatabaseSeeder extends Seeder
             ],
             'analyst' => [
                 'dashboard.view',
+                'clients.view',
+                'clients.create',
+                'clients.update',
             ],
             'cashier' => [
                 'dashboard.view',
+                'clients.view',
             ],
             'auditor' => [
                 'dashboard.view',

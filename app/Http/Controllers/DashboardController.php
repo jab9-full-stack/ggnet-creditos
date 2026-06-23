@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agency;
 use App\Models\AuditLog;
+use App\Models\Client;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\View\View;
@@ -18,6 +19,7 @@ class DashboardController extends Controller
             'metrics' => [
                 'users' => User::query()->count(),
                 'agencies' => Agency::query()->count(),
+                'clients' => Client::query()->count(),
                 'roles' => Role::query()->count(),
                 'permissions' => Permission::query()->count(),
                 'settings' => Setting::query()->count(),

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
@@ -35,6 +36,10 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('users', UserController::class)
         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('permission:users.view');
+
+    Route::resource('clients', ClientController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+        ->middleware('permission:clients.view');
 
     Route::get('/audit-logs', [AuditLogController::class, 'index'])
         ->middleware('permission:audit_logs.view')
