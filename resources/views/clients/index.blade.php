@@ -114,6 +114,10 @@
                                     </td>
                                     <td style="text-align:right;">
                                         <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                            @can('clients.view')
+                                                <a class="btn" style="background:#eef2f7;" href="{{ route('clients.show', $client) }}">Ver expediente</a>
+                                            @endcan
+
                                             @can('client_references.view')
                                                 <a class="btn" style="background:#eef2f7;" href="{{ route('clients.references.index', $client) }}">Referencias</a>
                                             @endcan
@@ -167,6 +171,10 @@
                             </div>
 
                             <div class="mobile-card-actions">
+                                @can('clients.view')
+                                    <a class="btn" style="background:#eef2f7;" href="{{ route('clients.show', $client) }}">Ver expediente</a>
+                                @endcan
+
                                 @can('client_references.view')
                                     <a class="btn" style="background:#eef2f7;" href="{{ route('clients.references.index', $client) }}">Referencias</a>
                                 @endcan

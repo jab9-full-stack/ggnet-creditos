@@ -58,6 +58,85 @@ class ClientController extends Controller
         ]);
     }
 
+
+    public function show(Request $request, Client $client): View
+    {
+        abort_unless($request->user()?->can('clients.view'), 403);
+
+        $client->load([
+            'agency:id,code,name',
+            'createdBy:id,name,email',
+            'updatedBy:id,name,email',
+        ]);
+
+        $references = $client->references()
+            ->orderByDesc('is_primary')
+            ->orderBy('full_name')
+            ->limit(5)
+            ->get();
+
+        $documents = $client->documents()
+            ->with(['uploadedBy:id,name,email', 'verifiedBy:id,name,email'])
+            ->latest()
+            ->limit(6)
+            ->get();
+
+        $documentsByType = $client->documents()
+            ->select(['id', 'type', 'status'])
+            ->get()
+            ->groupBy('type');
+
+        $referenceCount = $client->references()->count();
+        $documentCount = $client->documents()->count();
+        $verifiedDocumentCount = $client->documents()->where('status', 'verified')->count();
+
+        $checklist = [
+            [
+                'label' => 'Datos básicos completos',
+                'ok' => filled($client->first_name)
+                    && filled($client->last_name)
+                    && filled($client->dpi)
+                    && filled($client->phone)
+                    && filled($client->address_line),
+                'hint' => 'Nombre, DPI, teléfono y dirección.',
+            ],
+            [
+                'label' => 'Referencias registradas',
+                'ok' => $referenceCount > 0,
+                'hint' => 'Debe existir al menos una referencia.',
+            ],
+            [
+                'label' => 'DPI frontal cargado',
+                'ok' => $documentsByType->has('dpi_front'),
+                'hint' => 'Documento tipo DPI frontal.',
+            ],
+            [
+                'label' => 'DPI reverso cargado',
+                'ok' => $documentsByType->has('dpi_back'),
+                'hint' => 'Documento tipo DPI reverso.',
+            ],
+            [
+                'label' => 'Documento verificado',
+                'ok' => $verifiedDocumentCount > 0,
+                'hint' => 'Al menos un documento debe estar verificado.',
+            ],
+        ];
+
+        $completedChecks = collect($checklist)->where('ok', true)->count();
+
+        return view('clients.show', [
+            'client' => $client,
+            'references' => $references,
+            'documents' => $documents,
+            'referenceCount' => $referenceCount,
+            'documentCount' => $documentCount,
+            'verifiedDocumentCount' => $verifiedDocumentCount,
+            'checklist' => $checklist,
+            'completedChecks' => $completedChecks,
+            'totalChecks' => count($checklist),
+        ]);
+    }
+
     public function create(Request $request): View
     {
         abort_unless($request->user()?->can('clients.create'), 403);

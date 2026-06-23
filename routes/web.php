@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function (): void {
         ->middleware('permission:users.view');
 
     Route::resource('clients', ClientController::class)
-        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+        ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('permission:clients.view');
 
 
