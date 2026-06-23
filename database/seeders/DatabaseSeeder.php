@@ -51,6 +51,11 @@ class DatabaseSeeder extends Seeder
             'clients.update',
             'clients.delete',
 
+            'client_references.view',
+            'client_references.create',
+            'client_references.update',
+            'client_references.delete',
+
             'settings.view',
             'settings.update',
 
@@ -99,6 +104,7 @@ class DatabaseSeeder extends Seeder
             'cashier' => [
                 'dashboard.view',
                 'clients.view',
+                'client_references.view',
             ],
             'auditor' => [
                 'dashboard.view',
