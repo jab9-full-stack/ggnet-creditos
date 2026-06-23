@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Agency;
 use App\Models\Client;
+use App\Models\Credit;
 use App\Models\CreditRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -136,7 +137,7 @@ class CreditRequestStatusManagementTest extends TestCase
         ]);
     }
 
-    public function test_in_review_credit_request_can_be_approved_without_creating_credit(): void
+    public function test_in_review_credit_request_can_be_approved_and_creates_credit(): void
     {
         $admin = $this->admin();
         $client = $this->client($admin);
@@ -152,12 +153,55 @@ class CreditRequestStatusManagementTest extends TestCase
         $this->assertSame($admin->id, $creditRequest->approved_by);
         $this->assertNotNull($creditRequest->approved_at);
 
+        $credit = $creditRequest->credit()->firstOrFail();
+
+        $this->assertSame(Credit::STATUS_APPROVED_PENDING_DISBURSEMENT, $credit->status);
+        $this->assertSame('1500.00', $credit->principal_amount);
+        $this->assertSame('25.00', $credit->interest_rate_percent);
+        $this->assertSame('375.00', $credit->interest_amount);
+        $this->assertSame('1875.00', $credit->total_amount);
+        $this->assertSame(4, $credit->term_weeks);
+
         $this->assertDatabaseHas('audit_logs', [
             'event' => 'credit_request.approved',
             'module' => 'credit_requests',
             'auditable_type' => CreditRequest::class,
             'auditable_id' => $creditRequest->id,
         ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'event' => 'credit.created_from_request',
+            'module' => 'credits',
+            'auditable_type' => Credit::class,
+            'auditable_id' => $credit->id,
+        ]);
+    }
+
+    public function test_credit_created_from_request_uses_twenty_percent_for_two_thousand_or_more(): void
+    {
+        $admin = $this->admin();
+        $client = $this->client($admin);
+
+        $creditRequest = CreditRequest::query()->create([
+            'agency_id' => $admin->agency_id,
+            'client_id' => $client->id,
+            'code' => 'SOL-STATUS-2000',
+            'status' => CreditRequest::STATUS_IN_REVIEW,
+            'requested_amount' => 2000,
+            'requested_term_weeks' => 4,
+            'created_by' => $admin->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->post("/credit-requests/{$creditRequest->id}/approve")
+            ->assertRedirect("/credit-requests/{$creditRequest->id}");
+
+        $credit = $creditRequest->fresh()->credit()->firstOrFail();
+
+        $this->assertSame('2000.00', $credit->principal_amount);
+        $this->assertSame('20.00', $credit->interest_rate_percent);
+        $this->assertSame('400.00', $credit->interest_amount);
+        $this->assertSame('2400.00', $credit->total_amount);
     }
 
     public function test_in_review_credit_request_can_be_rejected(): void

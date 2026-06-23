@@ -2,7 +2,7 @@
     <div class="panel-body">
         <h2 style="margin:0 0 6px; font-size:18px;">Acciones de estado</h2>
         <p class="muted" style="margin:0 0 16px;">
-            Estas acciones solo cambian el estado de la solicitud. No generan crédito, cuotas, pagos ni caja.
+            Estas acciones controlan el estado. Al aprobar se genera el crédito base automáticamente. No generan cuotas, pagos ni caja todavía.
         </p>
 
         @if (in_array($creditRequest->status, [
@@ -31,7 +31,7 @@
 
                 @if ($creditRequest->status === \App\Models\CreditRequest::STATUS_IN_REVIEW)
                     @can('credit_requests.approve')
-                        <form method="POST" action="{{ route('credit-requests.approve', $creditRequest) }}" data-confirm="true" data-confirm-title="Aprobar solicitud" data-confirm-message="La solicitud quedará aprobada, pero no se generará crédito ni calendario de cuotas todavía.">
+                        <form method="POST" action="{{ route('credit-requests.approve', $creditRequest) }}" data-confirm="true" data-confirm-title="Aprobar solicitud" data-confirm-message="La solicitud quedará aprobada y se generará automáticamente el crédito base. No se crearán cuotas ni pagos todavía.">
                             @csrf
                             <button class="btn btn-primary" type="submit">Aprobar solicitud</button>
                         </form>
@@ -56,7 +56,11 @@
             <div style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#f9fafb;">
                 <strong>Estado final</strong>
                 <div class="muted" style="margin-top:4px;">
-                    Solicitud {{ mb_strtolower($creditRequest->statusLabel()) }}. Pendiente de generar crédito en módulo posterior.
+                    @if ($creditRequest->status === \App\Models\CreditRequest::STATUS_APPROVED && $creditRequest->credit)
+                        Solicitud aprobada. Crédito {{ $creditRequest->credit->code }} generado automáticamente. Pendiente de entrega del dinero.
+                    @else
+                        Solicitud {{ mb_strtolower($creditRequest->statusLabel()) }}. Pendiente de generar crédito en módulo posterior.
+                    @endif
                 </div>
             </div>
         @endif

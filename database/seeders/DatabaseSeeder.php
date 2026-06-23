@@ -197,6 +197,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(CreditRequestPermissionSeeder::class);
+        $this->call(CreditPermissionSeeder::class);
 
         app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
     }

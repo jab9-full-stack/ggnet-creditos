@@ -59,6 +59,11 @@ class Client extends Model
         return $this->hasMany(CreditRequest::class);
     }
 
+    public function credits(): HasMany
+    {
+        return $this->hasMany(Credit::class);
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

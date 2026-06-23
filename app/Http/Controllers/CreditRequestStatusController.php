@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\CreditRequest;
+use App\Services\CreditCreationService;
 use App\Support\Audit\AuditLogger;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -43,8 +45,12 @@ class CreditRequestStatusController extends Controller
         );
     }
 
-    public function approve(Request $request, CreditRequest $creditRequest, AuditLogger $auditLogger): RedirectResponse
-    {
+    public function approve(
+        Request $request,
+        CreditRequest $creditRequest,
+        AuditLogger $auditLogger,
+        CreditCreationService $creditCreationService,
+    ): RedirectResponse {
         abort_unless($request->user()?->can('credit_requests.approve'), 403);
 
         return $this->transition(
@@ -54,10 +60,17 @@ class CreditRequestStatusController extends Controller
             allowedCurrentStatuses: [CreditRequest::STATUS_IN_REVIEW],
             newStatus: CreditRequest::STATUS_APPROVED,
             event: 'credit_request.approved',
-            successMessage: 'Solicitud aprobada correctamente. Todavía no se generó crédito ni calendario de cuotas.',
+            successMessage: 'Solicitud aprobada y crédito generado automáticamente. Pendiente de entrega del dinero.',
             timestampColumn: 'approved_at',
             actorColumn: 'approved_by',
             noteColumn: 'decision_notes',
+            afterTransition: function (CreditRequest $approvedRequest) use ($request, $auditLogger, $creditCreationService): void {
+                $creditCreationService->createFromCreditRequest(
+                    creditRequest: $approvedRequest,
+                    user: $request->user(),
+                    auditLogger: $auditLogger,
+                );
+            },
         );
     }
 
@@ -112,6 +125,7 @@ class CreditRequestStatusController extends Controller
         ?string $timestampColumn = null,
         ?string $actorColumn = null,
         ?string $noteColumn = null,
+        ?callable $afterTransition = null,
     ): RedirectResponse {
         $data = $request->validate([
             'status_notes' => ['nullable', 'string', 'max:2000'],
@@ -127,54 +141,74 @@ class CreditRequestStatusController extends Controller
 
         $oldStatus = $creditRequest->status;
 
-        $changes = [
-            'status' => $newStatus,
-            'updated_by' => $request->user()?->id,
-        ];
+        $fresh = DB::transaction(function () use (
+            $request,
+            $creditRequest,
+            $auditLogger,
+            $newStatus,
+            $event,
+            $timestampColumn,
+            $actorColumn,
+            $noteColumn,
+            $afterTransition,
+            $data,
+            $oldStatus,
+        ): CreditRequest {
+            $changes = [
+                'status' => $newStatus,
+                'updated_by' => $request->user()?->id,
+            ];
 
-        if ($timestampColumn !== null) {
-            $changes[$timestampColumn] = now();
-        }
+            if ($timestampColumn !== null) {
+                $changes[$timestampColumn] = now();
+            }
 
-        if ($actorColumn !== null) {
-            $changes[$actorColumn] = $request->user()?->id;
-        }
+            if ($actorColumn !== null) {
+                $changes[$actorColumn] = $request->user()?->id;
+            }
 
-        if ($noteColumn !== null && filled($data['status_notes'] ?? null)) {
-            $changes[$noteColumn] = $data['status_notes'];
-        }
+            if ($noteColumn !== null && filled($data['status_notes'] ?? null)) {
+                $changes[$noteColumn] = $data['status_notes'];
+            }
 
-        $creditRequest->fill($changes);
-        $creditRequest->save();
+            $creditRequest->fill($changes);
+            $creditRequest->save();
 
-        $fresh = $creditRequest->fresh();
+            $fresh = $creditRequest->fresh(['client', 'credit']);
 
-        $auditLogger->log(
-            event: $event,
-            module: 'credit_requests',
-            auditable: $fresh,
-            oldValues: [
-                'status' => $oldStatus,
-            ],
-            newValues: [
-                'status' => $fresh->status,
-                'submitted_at' => $fresh->submitted_at,
-                'reviewed_at' => $fresh->reviewed_at,
-                'approved_at' => $fresh->approved_at,
-                'rejected_at' => $fresh->rejected_at,
-                'cancelled_at' => $fresh->cancelled_at,
-            ],
-            context: [
-                'action' => $event,
-                'credit_request_code' => $fresh->code,
-                'client_id' => $fresh->client_id,
-                'client_code' => $fresh->client?->code,
-                'old_status' => $oldStatus,
-                'new_status' => $fresh->status,
-                'status_note' => $data['status_notes'] ?? null,
-            ],
-            user: $request->user(),
-        );
+            $auditLogger->log(
+                event: $event,
+                module: 'credit_requests',
+                auditable: $fresh,
+                oldValues: [
+                    'status' => $oldStatus,
+                ],
+                newValues: [
+                    'status' => $fresh->status,
+                    'submitted_at' => $fresh->submitted_at,
+                    'reviewed_at' => $fresh->reviewed_at,
+                    'approved_at' => $fresh->approved_at,
+                    'rejected_at' => $fresh->rejected_at,
+                    'cancelled_at' => $fresh->cancelled_at,
+                ],
+                context: [
+                    'action' => $event,
+                    'credit_request_code' => $fresh->code,
+                    'client_id' => $fresh->client_id,
+                    'client_code' => $fresh->client?->code,
+                    'old_status' => $oldStatus,
+                    'new_status' => $fresh->status,
+                    'status_note' => $data['status_notes'] ?? null,
+                ],
+                user: $request->user(),
+            );
+
+            if ($afterTransition !== null) {
+                $afterTransition($fresh);
+            }
+
+            return $fresh->fresh(['client', 'credit']);
+        });
 
         return redirect()
             ->route('credit-requests.show', $fresh)

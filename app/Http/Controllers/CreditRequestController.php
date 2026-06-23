@@ -117,6 +117,7 @@ class CreditRequestController extends Controller
         $creditRequest->load([
             'agency:id,code,name',
             'client.agency:id,code,name',
+            'credit:id,credit_request_id,code,status,principal_amount,interest_rate_percent,interest_amount,total_amount,term_weeks,approved_at',
             'createdBy:id,name,email',
             'updatedBy:id,name,email',
         ]);

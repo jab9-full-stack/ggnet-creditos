@@ -35,6 +35,11 @@ class Agency extends Model
         return $this->hasMany(CreditRequest::class);
     }
 
+    public function credits(): HasMany
+    {
+        return $this->hasMany(Credit::class);
+    }
+
     protected function casts(): array
     {
         return [

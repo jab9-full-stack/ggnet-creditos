@@ -65,6 +65,40 @@
             'creditRequest' => $creditRequest,
         ])
 
+        @if ($creditRequest->credit)
+            <section class="panel" style="margin-bottom:18px; border:1px solid rgba(13,148,136,.28);">
+                <div class="panel-body">
+                    <div style="display:flex; justify-content:space-between; gap:14px; align-items:flex-start; flex-wrap:wrap;">
+                        <div>
+                            <h2 style="margin:0 0 6px; font-size:18px;">Crédito generado</h2>
+                            <p class="muted" style="margin:0;">Crédito creado automáticamente desde esta solicitud aprobada. Las cuotas se generarán después de confirmar la entrega del dinero.</p>
+                        </div>
+
+                        @can('credits.view')
+                            <a class="btn btn-primary" href="{{ route('credits.show', $creditRequest->credit) }}">Ver crédito</a>
+                        @endcan
+                    </div>
+
+                    <div class="grid grid-3" style="margin-top:16px;">
+                        <div class="metric">
+                            <span>Código</span>
+                            <strong>{{ $creditRequest->credit->code }}</strong>
+                        </div>
+
+                        <div class="metric">
+                            <span>Capital</span>
+                            <strong>Q {{ number_format((float) $creditRequest->credit->principal_amount, 2) }}</strong>
+                        </div>
+
+                        <div class="metric">
+                            <span>Total a recuperar</span>
+                            <strong>Q {{ number_format((float) $creditRequest->credit->total_amount, 2) }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        @endif
+
         <section class="panel" style="margin-bottom:18px;">
             <div class="panel-body">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:16px; flex-wrap:wrap;">

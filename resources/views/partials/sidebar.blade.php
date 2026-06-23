@@ -28,6 +28,10 @@
             <a class="nav-link {{ request()->routeIs('credit-requests.*') ? 'active' : '' }}" href="{{ route('credit-requests.index') }}">Solicitudes</a>
         @endcan
 
+        @can('credits.view')
+            <a class="nav-link {{ request()->routeIs('credits.*') ? 'active' : '' }}" href="{{ route('credits.index') }}">Créditos</a>
+        @endcan
+
         @can('audit_logs.view')
             <a class="nav-link {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}" href="{{ route('audit-logs.index') }}">Bitácora</a>
         @endcan
