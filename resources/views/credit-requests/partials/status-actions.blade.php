@@ -56,7 +56,7 @@
             <div style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#f9fafb;">
                 <strong>Estado final</strong>
                 <div class="muted" style="margin-top:4px;">
-                    Esta solicitud ya está {{ mb_strtolower($creditRequest->statusLabel()) }}. No hay acciones disponibles desde M03.2.
+                    Solicitud {{ mb_strtolower($creditRequest->statusLabel()) }}. Pendiente de generar crédito en módulo posterior.
                 </div>
             </div>
         @endif

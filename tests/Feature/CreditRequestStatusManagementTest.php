@@ -234,6 +234,35 @@ class CreditRequestStatusManagementTest extends TestCase
         $this->assertSame(CreditRequest::STATUS_APPROVED, $creditRequest->fresh()->status);
     }
 
+    public function test_status_history_displays_statuses_in_spanish(): void
+    {
+        $admin = $this->admin();
+        $client = $this->client($admin);
+        $creditRequest = $this->creditRequest($admin, $client);
+
+        $this->actingAs($admin)
+            ->post("/credit-requests/{$creditRequest->id}/submit")
+            ->assertRedirect("/credit-requests/{$creditRequest->id}");
+
+        $this->actingAs($admin)
+            ->get("/credit-requests/{$creditRequest->id}")
+            ->assertStatus(200)
+            ->assertSee('Borrador')
+            ->assertSee('Enviada');
+    }
+
+    public function test_final_status_message_explains_credit_generation_is_pending(): void
+    {
+        $admin = $this->admin();
+        $client = $this->client($admin);
+        $creditRequest = $this->creditRequest($admin, $client, CreditRequest::STATUS_APPROVED);
+
+        $this->actingAs($admin)
+            ->get("/credit-requests/{$creditRequest->id}")
+            ->assertStatus(200)
+            ->assertSee('Solicitud aprobada. Pendiente de generar crédito en módulo posterior.');
+    }
+
     public function test_guest_cannot_change_credit_request_status(): void
     {
         $admin = $this->admin();

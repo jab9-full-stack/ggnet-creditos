@@ -12,15 +12,15 @@
             </div>
 
             <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <a class="btn" style="background:#eef2f7;" href="{{ route('credit-requests.index') }}">Volver</a>
+                <a class="btn" style="background:#ffffff; border:1px solid var(--line); color:#111827; box-shadow:0 4px 12px rgba(15,23,42,.06);" href="{{ route('credit-requests.index') }}">Volver</a>
 
                 @can('clients.view')
-                    <a class="btn" style="background:#eef2f7;" href="{{ route('clients.show', $client) }}">Ver expediente</a>
+                    <a class="btn" style="background:#ffffff; border:1px solid var(--line); color:#111827; box-shadow:0 4px 12px rgba(15,23,42,.06);" href="{{ route('clients.show', $client) }}">Ver expediente</a>
                 @endcan
 
                 @can('credit_requests.update')
                     @if ($creditRequest->canBeUpdated())
-                        <a class="btn" style="background:#eef2f7;" href="{{ route('credit-requests.edit', $creditRequest) }}">Editar</a>
+                        <a class="btn" style="background:#ffffff; border:1px solid var(--line); color:#111827; box-shadow:0 4px 12px rgba(15,23,42,.06);" href="{{ route('credit-requests.edit', $creditRequest) }}">Editar</a>
                     @endif
                 @endcan
 
@@ -67,48 +67,56 @@
 
         <section class="panel" style="margin-bottom:18px;">
             <div class="panel-body">
-                <h2 style="margin:0 0 6px; font-size:18px;">Solicitud</h2>
-                <p class="muted" style="margin:0 0 16px;">Datos capturados para análisis. Todavía no existe crédito aprobado ni calendario.</p>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:16px; flex-wrap:wrap;">
+                    <div>
+                        <h2 style="margin:0 0 6px; font-size:18px;">Solicitud</h2>
+                        <p class="muted" style="margin:0;">Datos capturados para análisis. Todavía no existe crédito aprobado ni calendario.</p>
+                    </div>
+
+                    <span style="display:inline-flex; align-items:center; padding:8px 12px; border-radius:999px; background:#f9fafb; border:1px solid var(--line); {{ $creditRequest->statusStyle() }}">
+                        {{ $creditRequest->statusLabel() }}
+                    </span>
+                </div>
 
                 <div class="form-grid-uniform">
-                    <div>
+                    <div style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#fff;">
                         <span class="mobile-field-label">Código</span>
-                        <span class="mobile-field-value">{{ $creditRequest->code }}</span>
+                        <span class="mobile-field-value" style="font-size:15px;">{{ $creditRequest->code }}</span>
                     </div>
 
-                    <div>
+                    <div style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#fff;">
                         <span class="mobile-field-label">Agencia</span>
-                        <span class="mobile-field-value">{{ $creditRequest->agency?->name ?? 'Sin agencia' }}</span>
+                        <span class="mobile-field-value" style="font-size:15px;">{{ $creditRequest->agency?->name ?? 'Sin agencia' }}</span>
                     </div>
 
-                    <div>
-                        <span class="mobile-field-label">Fecha</span>
-                        <span class="mobile-field-value">{{ $creditRequest->created_at?->format('d/m/Y H:i') }}</span>
+                    <div style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#fff;">
+                        <span class="mobile-field-label">Fecha de solicitud</span>
+                        <span class="mobile-field-value" style="font-size:15px;">{{ $creditRequest->created_at?->format('d/m/Y H:i') }}</span>
                     </div>
 
-                    <div>
-                        <span class="mobile-field-label">Ingreso mensual</span>
-                        <span class="mobile-field-value">{{ $creditRequest->monthly_income ? 'Q '.number_format((float) $creditRequest->monthly_income, 2) : '—' }}</span>
+                    <div style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#fff;">
+                        <span class="mobile-field-label">Ingreso mensual aproximado</span>
+                        <span class="mobile-field-value" style="font-size:15px;">{{ $creditRequest->monthly_income ? 'Q '.number_format((float) $creditRequest->monthly_income, 2) : '—' }}</span>
                     </div>
 
-                    <div>
+                    <div style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#fff;">
                         <span class="mobile-field-label">Fuente de ingresos</span>
-                        <span class="mobile-field-value">{{ $creditRequest->income_source ?: '—' }}</span>
+                        <span class="mobile-field-value" style="font-size:15px;">{{ $creditRequest->income_source ?: '—' }}</span>
                     </div>
 
-                    <div>
+                    <div style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#fff;">
                         <span class="mobile-field-label">Creado por</span>
-                        <span class="mobile-field-value">{{ $creditRequest->createdBy?->name ?? 'Sistema' }}</span>
+                        <span class="mobile-field-value" style="font-size:15px;">{{ $creditRequest->createdBy?->name ?? 'Sistema' }}</span>
                     </div>
 
-                    <div class="span-3">
+                    <div class="span-3" style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#fff;">
                         <span class="mobile-field-label">Destino / propósito</span>
-                        <span class="mobile-field-value">{{ $creditRequest->purpose ?: 'Sin propósito registrado' }}</span>
+                        <span class="mobile-field-value" style="font-size:15px; line-height:1.6;">{{ $creditRequest->purpose ?: 'Sin propósito registrado' }}</span>
                     </div>
 
-                    <div class="span-3">
+                    <div class="span-3" style="padding:14px; border:1px solid var(--line); border-radius:16px; background:#fff;">
                         <span class="mobile-field-label">Observaciones</span>
-                        <span class="mobile-field-value">{{ $creditRequest->notes ?: 'Sin observaciones' }}</span>
+                        <span class="mobile-field-value" style="font-size:15px; line-height:1.6;">{{ $creditRequest->notes ?: 'Sin observaciones' }}</span>
                     </div>
                 </div>
             </div>
@@ -160,6 +168,10 @@
 
         <section class="panel" style="margin-bottom:18px;">
             <div class="panel-body">
+                @php
+                    $statusLabels = \App\Models\CreditRequest::STATUSES;
+                @endphp
+
                 <h2 style="margin:0 0 6px; font-size:18px;">Historial de estado</h2>
                 <p class="muted" style="margin:0 0 16px;">Últimos eventos registrados para esta solicitud.</p>
 
@@ -176,11 +188,16 @@
                         </thead>
                         <tbody>
                             @forelse ($statusAuditLogs as $log)
+                                @php
+                                    $oldStatus = $log->context['old_status'] ?? $log->old_values['status'] ?? null;
+                                    $newStatus = $log->context['new_status'] ?? $log->new_values['status'] ?? null;
+                                @endphp
+
                                 <tr>
                                     <td>{{ $log->created_at?->format('d/m/Y H:i') }}</td>
                                     <td>{{ $log->event }}</td>
-                                    <td>{{ $log->context['old_status'] ?? $log->old_values['status'] ?? '—' }}</td>
-                                    <td>{{ $log->context['new_status'] ?? $log->new_values['status'] ?? '—' }}</td>
+                                    <td>{{ $oldStatus ? ($statusLabels[$oldStatus] ?? $oldStatus) : '—' }}</td>
+                                    <td>{{ $newStatus ? ($statusLabels[$newStatus] ?? $newStatus) : '—' }}</td>
                                     <td>
                                         {{ $log->user?->name ?? 'Sistema' }}
                                         <div class="muted">{{ $log->user?->email }}</div>
@@ -197,12 +214,23 @@
 
                 <div class="mobile-list">
                     @forelse ($statusAuditLogs as $log)
+                        @php
+                            $oldStatus = $log->context['old_status'] ?? $log->old_values['status'] ?? null;
+                            $newStatus = $log->context['new_status'] ?? $log->new_values['status'] ?? null;
+                        @endphp
+
                         <article class="mobile-card">
                             <div class="mobile-card-title">{{ $log->event }}</div>
                             <div class="mobile-card-subtitle">{{ $log->created_at?->format('d/m/Y H:i') }} · {{ $log->user?->name ?? 'Sistema' }}</div>
                             <div class="mobile-card-grid">
-                                <div><span class="mobile-field-label">Anterior</span><span class="mobile-field-value">{{ $log->context['old_status'] ?? $log->old_values['status'] ?? '—' }}</span></div>
-                                <div><span class="mobile-field-label">Nuevo</span><span class="mobile-field-value">{{ $log->context['new_status'] ?? $log->new_values['status'] ?? '—' }}</span></div>
+                                <div>
+                                    <span class="mobile-field-label">Anterior</span>
+                                    <span class="mobile-field-value">{{ $oldStatus ? ($statusLabels[$oldStatus] ?? $oldStatus) : '—' }}</span>
+                                </div>
+                                <div>
+                                    <span class="mobile-field-label">Nuevo</span>
+                                    <span class="mobile-field-value">{{ $newStatus ? ($statusLabels[$newStatus] ?? $newStatus) : '—' }}</span>
+                                </div>
                             </div>
                         </article>
                     @empty
