@@ -6,6 +6,7 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientDocumentController;
 use App\Http\Controllers\ClientReferenceController;
+use App\Http\Controllers\CreditRequestController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
@@ -42,6 +43,11 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('clients', ClientController::class)
         ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('permission:clients.view');
+
+    Route::resource('credit-requests', CreditRequestController::class)
+        ->parameters(['credit-requests' => 'creditRequest'])
+        ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
+        ->middleware('permission:credit_requests.view');
 
 
 

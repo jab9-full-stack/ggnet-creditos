@@ -24,6 +24,10 @@
             <a class="nav-link {{ request()->routeIs('clients.*') ? 'active' : '' }}" href="{{ route('clients.index') }}">Clientes</a>
         @endcan
 
+        @can('credit_requests.view')
+            <a class="nav-link {{ request()->routeIs('credit-requests.*') ? 'active' : '' }}" href="{{ route('credit-requests.index') }}">Solicitudes</a>
+        @endcan
+
         @can('audit_logs.view')
             <a class="nav-link {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}" href="{{ route('audit-logs.index') }}">Bitácora</a>
         @endcan
