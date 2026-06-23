@@ -7,6 +7,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientDocumentController;
 use App\Http\Controllers\ClientReferenceController;
 use App\Http\Controllers\CreditRequestController;
+use App\Http\Controllers\CreditRequestStatusController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
@@ -43,6 +44,26 @@ Route::middleware('auth')->group(function (): void {
     Route::resource('clients', ClientController::class)
         ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('permission:clients.view');
+
+    Route::post('/credit-requests/{creditRequest}/submit', [CreditRequestStatusController::class, 'submit'])
+        ->middleware('permission:credit_requests.update')
+        ->name('credit-requests.submit');
+
+    Route::post('/credit-requests/{creditRequest}/start-review', [CreditRequestStatusController::class, 'startReview'])
+        ->middleware('permission:credit_requests.review')
+        ->name('credit-requests.start-review');
+
+    Route::post('/credit-requests/{creditRequest}/approve', [CreditRequestStatusController::class, 'approve'])
+        ->middleware('permission:credit_requests.approve')
+        ->name('credit-requests.approve');
+
+    Route::post('/credit-requests/{creditRequest}/reject', [CreditRequestStatusController::class, 'reject'])
+        ->middleware('permission:credit_requests.reject')
+        ->name('credit-requests.reject');
+
+    Route::post('/credit-requests/{creditRequest}/cancel', [CreditRequestStatusController::class, 'cancel'])
+        ->middleware('permission:credit_requests.update')
+        ->name('credit-requests.cancel');
 
     Route::resource('credit-requests', CreditRequestController::class)
         ->parameters(['credit-requests' => 'creditRequest'])

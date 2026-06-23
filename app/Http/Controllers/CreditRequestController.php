@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agency;
+use App\Models\AuditLog;
 use App\Models\Client;
 use App\Models\CreditRequest;
 use App\Support\Audit\AuditLogger;
@@ -138,6 +139,15 @@ class CreditRequestController extends Controller
         $documentCount = $client->documents()->count();
         $verifiedDocumentCount = $client->documents()->where('status', 'verified')->count();
 
+        $statusAuditLogs = AuditLog::query()
+            ->with('user:id,name,email')
+            ->where('auditable_type', CreditRequest::class)
+            ->where('auditable_id', $creditRequest->id)
+            ->where('module', 'credit_requests')
+            ->latest()
+            ->limit(20)
+            ->get();
+
         return view('credit-requests.show', [
             'creditRequest' => $creditRequest,
             'client' => $client,
@@ -146,6 +156,7 @@ class CreditRequestController extends Controller
             'referenceCount' => $referenceCount,
             'documentCount' => $documentCount,
             'verifiedDocumentCount' => $verifiedDocumentCount,
+            'statusAuditLogs' => $statusAuditLogs,
         ]);
     }
 

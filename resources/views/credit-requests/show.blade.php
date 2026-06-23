@@ -61,6 +61,10 @@
             </div>
         </section>
 
+        @include('credit-requests.partials.status-actions', [
+            'creditRequest' => $creditRequest,
+        ])
+
         <section class="panel" style="margin-bottom:18px;">
             <div class="panel-body">
                 <h2 style="margin:0 0 6px; font-size:18px;">Solicitud</h2>
@@ -150,6 +154,60 @@
                         <span class="mobile-field-label">Dirección</span>
                         <span class="mobile-field-value">{{ $client->address_line }}</span>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" style="margin-bottom:18px;">
+            <div class="panel-body">
+                <h2 style="margin:0 0 6px; font-size:18px;">Historial de estado</h2>
+                <p class="muted" style="margin:0 0 16px;">Últimos eventos registrados para esta solicitud.</p>
+
+                <div class="desktop-table table-scroll">
+                    <table class="table compact-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Evento</th>
+                                <th>Estado anterior</th>
+                                <th>Estado nuevo</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($statusAuditLogs as $log)
+                                <tr>
+                                    <td>{{ $log->created_at?->format('d/m/Y H:i') }}</td>
+                                    <td>{{ $log->event }}</td>
+                                    <td>{{ $log->context['old_status'] ?? $log->old_values['status'] ?? '—' }}</td>
+                                    <td>{{ $log->context['new_status'] ?? $log->new_values['status'] ?? '—' }}</td>
+                                    <td>
+                                        {{ $log->user?->name ?? 'Sistema' }}
+                                        <div class="muted">{{ $log->user?->email }}</div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="muted">Sin eventos de estado registrados todavía.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mobile-list">
+                    @forelse ($statusAuditLogs as $log)
+                        <article class="mobile-card">
+                            <div class="mobile-card-title">{{ $log->event }}</div>
+                            <div class="mobile-card-subtitle">{{ $log->created_at?->format('d/m/Y H:i') }} · {{ $log->user?->name ?? 'Sistema' }}</div>
+                            <div class="mobile-card-grid">
+                                <div><span class="mobile-field-label">Anterior</span><span class="mobile-field-value">{{ $log->context['old_status'] ?? $log->old_values['status'] ?? '—' }}</span></div>
+                                <div><span class="mobile-field-label">Nuevo</span><span class="mobile-field-value">{{ $log->context['new_status'] ?? $log->new_values['status'] ?? '—' }}</span></div>
+                            </div>
+                        </article>
+                    @empty
+                        <p class="muted">Sin eventos de estado registrados todavía.</p>
+                    @endforelse
                 </div>
             </div>
         </section>
