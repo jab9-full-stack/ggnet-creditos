@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'agency_id',
     'client_id',
     'credit_id',
+    'credit_payment_id',
     'number',
     'status',
     'due_date',
@@ -52,6 +53,11 @@ class CreditInstallment extends Model
     public function credit(): BelongsTo
     {
         return $this->belongsTo(Credit::class);
+    }
+
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(CreditPayment::class, 'credit_payment_id');
     }
 
     public function createdBy(): BelongsTo

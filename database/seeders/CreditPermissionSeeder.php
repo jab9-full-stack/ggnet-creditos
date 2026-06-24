@@ -16,6 +16,8 @@ class CreditPermissionSeeder extends Seeder
             'credits.view',
             'credits.update',
             'credits.disburse',
+            'credit_payments.view',
+            'credit_payments.create',
         ];
 
         foreach ($permissions as $permission) {
@@ -30,12 +32,16 @@ class CreditPermissionSeeder extends Seeder
             'admin' => $permissions,
             'manager' => [
                 'credits.view',
+                'credit_payments.view',
             ],
             'analyst' => [
                 'credits.view',
+                'credit_payments.view',
             ],
             'cashier' => [
                 'credits.view',
+                'credit_payments.view',
+                'credit_payments.create',
             ],
         ];
 

@@ -80,7 +80,8 @@ class CreditController extends Controller
             'createdBy:id,name,email',
             'approvedBy:id,name,email',
             'disbursedBy:id,name,email',
-            'installments',
+            'installments.payment:id,code,amount,paid_at,method',
+            'payments.receivedBy:id,name,email',
         ]);
 
         $auditLogs = AuditLog::query()

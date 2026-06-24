@@ -36,6 +36,20 @@
             <div hidden data-toast-type="error" data-toast-title="Revisa la información" data-toast-message="{{ $errors->first() }}"></div>
         @endif
 
+        @php
+            $pendingInstallments = $credit->installments
+                ->where('status', \App\Models\CreditInstallment::STATUS_PENDING)
+                ->sortBy('number')
+                ->values();
+
+            $paidInstallmentsCount = $credit->installments
+                ->where('status', \App\Models\CreditInstallment::STATUS_PAID)
+                ->count();
+
+            $paidAmount = $credit->paidAmount();
+            $remainingAmount = $credit->remainingAmount();
+        @endphp
+
         <section class="grid grid-3" style="margin-bottom:18px;">
             <div class="metric">
                 <span>Capital</span>
@@ -50,6 +64,23 @@
             <div class="metric">
                 <span>Total a recuperar</span>
                 <strong>Q {{ number_format((float) $credit->total_amount, 2) }}</strong>
+            </div>
+        </section>
+
+        <section class="grid grid-3" style="margin-bottom:18px;">
+            <div class="metric">
+                <span>Pagado</span>
+                <strong>Q {{ number_format($paidAmount, 2) }}</strong>
+            </div>
+
+            <div class="metric">
+                <span>Saldo pendiente</span>
+                <strong>Q {{ number_format($remainingAmount, 2) }}</strong>
+            </div>
+
+            <div class="metric">
+                <span>Cuotas</span>
+                <strong>{{ $paidInstallmentsCount }}/{{ $credit->installments->count() }} pagadas</strong>
             </div>
         </section>
 
@@ -155,6 +186,75 @@
             </div>
         </section>
 
+        @can('credit_payments.create')
+            @if ($credit->canReceivePayments())
+                <section class="panel" style="margin-bottom:18px; border:1px solid rgba(13,148,136,.28);">
+                    <div class="panel-body">
+                        <h2 style="margin:0 0 6px; font-size:18px;">Registrar pago completo</h2>
+                        <p class="muted" style="margin:0 0 16px;">No se aceptan pagos parciales. Selecciona cuántas cuotas completas se pagarán; el sistema calcula el monto automáticamente.</p>
+
+                        <form method="POST" action="{{ route('credits.payments.store', $credit) }}" data-confirm="true" data-confirm-title="Registrar pago" data-confirm-message="Se pagarán cuotas completas empezando por la más antigua pendiente. Esta acción no crea movimiento de caja formal todavía.">
+                            @csrf
+
+                            <div class="form-grid-uniform">
+                                <label class="form-group">
+                                    <span class="label">Cuotas completas a pagar <span style="color:var(--danger);">*</span></span>
+                                    <select class="input" name="installments_count" required>
+                                        <option value="">Seleccionar</option>
+                                        @for ($i = 1; $i <= $pendingInstallments->count(); $i++)
+                                            @php
+                                                $amountForOption = $pendingInstallments->take($i)->sum(fn ($item) => (float) $item->total_amount);
+                                            @endphp
+                                            <option value="{{ $i }}" @selected((string) old('installments_count') === (string) $i)>
+                                                {{ $i }} cuota{{ $i > 1 ? 's' : '' }} · Q {{ number_format($amountForOption, 2) }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </label>
+
+                                <label class="form-group">
+                                    <span class="label">Método <span style="color:var(--danger);">*</span></span>
+                                    <select class="input" name="method" required>
+                                        <option value="">Seleccionar método</option>
+                                        @foreach (\App\Models\CreditPayment::METHODS as $value => $label)
+                                            <option value="{{ $value }}" @selected(old('method') === $value)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+
+                                <label class="form-group">
+                                    <span class="label">Fecha de pago <span style="color:var(--danger);">*</span></span>
+                                    <input
+                                        class="input"
+                                        type="date"
+                                        name="payment_date"
+                                        value="{{ old('payment_date', now()->toDateString()) }}"
+                                        min="{{ $credit->disbursed_at?->toDateString() }}"
+                                        max="{{ now()->toDateString() }}"
+                                        required
+                                    >
+                                </label>
+
+                                <label class="form-group">
+                                    <span class="label">Referencia</span>
+                                    <input class="input" name="reference" value="{{ old('reference') }}" placeholder="Obligatoria para depósito o transferencia">
+                                </label>
+
+                                <label class="form-group span-3">
+                                    <span class="label">Nota</span>
+                                    <textarea class="input" name="notes" rows="3" placeholder="Observación interna opcional">{{ old('notes') }}</textarea>
+                                </label>
+                            </div>
+
+                            <div style="display:flex; justify-content:flex-end; margin-top:18px;">
+                                <button class="btn btn-primary" type="submit">Registrar pago</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            @endif
+        @endcan
+
         <section class="panel" style="margin-bottom:18px;">
             <div class="panel-body">
                 <h2 style="margin:0 0 6px; font-size:18px;">Calendario de cuotas</h2>
@@ -170,6 +270,7 @@
                                 <th>Interés</th>
                                 <th>Total cuota</th>
                                 <th>Pagado</th>
+                                <th>Pago</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -182,11 +283,12 @@
                                     <td>Q {{ number_format((float) $installment->interest_amount, 2) }}</td>
                                     <td><strong>Q {{ number_format((float) $installment->total_amount, 2) }}</strong></td>
                                     <td>Q {{ number_format((float) $installment->paid_amount, 2) }}</td>
+                                    <td>{{ $installment->payment?->code ?? '—' }}</td>
                                     <td><span style="{{ $installment->statusStyle() }}">{{ $installment->statusLabel() }}</span></td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="muted">El calendario se generará al confirmar la entrega del dinero.</td>
+                                    <td colspan="8" class="muted">El calendario se generará al confirmar la entrega del dinero.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -242,6 +344,61 @@
                         <span class="mobile-field-label">Dirección</span>
                         <span class="mobile-field-value">{{ $credit->client?->address_line }}</span>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" style="margin-bottom:18px;">
+            <div class="panel-body">
+                <h2 style="margin:0 0 6px; font-size:18px;">Pagos registrados</h2>
+                <p class="muted" style="margin:0 0 16px;">Pagos operativos aplicados a cuotas completas. Caja formal se trabajará en M05.</p>
+
+                <div class="desktop-table table-scroll">
+                    <table class="table compact-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Fecha</th>
+                                <th>Método</th>
+                                <th>Cuotas</th>
+                                <th>Monto</th>
+                                <th>Referencia</th>
+                                <th>Recibido por</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($credit->payments as $payment)
+                                <tr>
+                                    <td><strong>{{ $payment->code }}</strong></td>
+                                    <td>{{ $payment->paid_at?->format('d/m/Y H:i') }}</td>
+                                    <td>{{ $payment->methodLabel() }}</td>
+                                    <td>{{ $payment->installments_count }}</td>
+                                    <td><strong>Q {{ number_format((float) $payment->amount, 2) }}</strong></td>
+                                    <td>{{ $payment->reference ?: '—' }}</td>
+                                    <td>{{ $payment->receivedBy?->name ?? 'Sistema' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="muted">No hay pagos registrados todavía.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mobile-list">
+                    @forelse ($credit->payments as $payment)
+                        <article class="mobile-card">
+                            <div class="mobile-card-title">{{ $payment->code }} · Q {{ number_format((float) $payment->amount, 2) }}</div>
+                            <div class="mobile-card-subtitle">{{ $payment->methodLabel() }} · {{ $payment->paid_at?->format('d/m/Y H:i') }}</div>
+                            <div class="mobile-card-grid">
+                                <div><span class="mobile-field-label">Cuotas</span><span class="mobile-field-value">{{ $payment->installments_count }}</span></div>
+                                <div><span class="mobile-field-label">Referencia</span><span class="mobile-field-value">{{ $payment->reference ?: '—' }}</span></div>
+                            </div>
+                        </article>
+                    @empty
+                        <p class="muted">No hay pagos registrados todavía.</p>
+                    @endforelse
                 </div>
             </div>
         </section>

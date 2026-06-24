@@ -63,6 +63,11 @@ class Credit extends Model
         return $this->hasMany(CreditInstallment::class)->orderBy('number');
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(CreditPayment::class)->latest('paid_at');
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -108,6 +113,27 @@ class Credit extends Model
     {
         return $this->status === self::STATUS_APPROVED_PENDING_DISBURSEMENT
             && $this->installments()->doesntExist();
+    }
+
+    public function canReceivePayments(): bool
+    {
+        return $this->status === self::STATUS_DISBURSED
+            && $this->installments()->where('status', CreditInstallment::STATUS_PENDING)->exists();
+    }
+
+    public function paidAmount(): float
+    {
+        return round((float) $this->installments()->sum('paid_amount'), 2);
+    }
+
+    public function remainingAmount(): float
+    {
+        return round((float) $this->total_amount - $this->paidAmount(), 2);
+    }
+
+    public function pendingInstallmentsCount(): int
+    {
+        return $this->installments()->where('status', CreditInstallment::STATUS_PENDING)->count();
     }
 
     protected function casts(): array
