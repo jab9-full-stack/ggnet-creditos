@@ -74,6 +74,7 @@ class CreditPaymentService
                 'client_id' => $lockedCredit->client_id,
                 'credit_id' => $lockedCredit->id,
                 'code' => $this->generateUniqueCode(),
+                'status' => CreditPayment::STATUS_APPLIED,
                 'method' => $method,
                 'reference' => filled($reference) ? trim((string) $reference) : null,
                 'installments_count' => $installmentsCount,

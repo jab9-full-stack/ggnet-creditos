@@ -18,6 +18,7 @@ class CreditPermissionSeeder extends Seeder
             'credits.disburse',
             'credit_payments.view',
             'credit_payments.create',
+            'credit_payments.void',
             'credit_installments.mark_overdue',
         ];
 

@@ -418,8 +418,10 @@
                                 <th>Método</th>
                                 <th>Cuotas</th>
                                 <th>Monto</th>
+                                <th>Estado</th>
                                 <th>Referencia</th>
                                 <th>Recibido por</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -430,12 +432,43 @@
                                     <td>{{ $payment->methodLabel() }}</td>
                                     <td>{{ $payment->installments_count }}</td>
                                     <td><strong>Q {{ number_format((float) $payment->amount, 2) }}</strong></td>
-                                    <td>{{ $payment->reference ?: '—' }}</td>
-                                    <td>{{ $payment->receivedBy?->name ?? 'Sistema' }}</td>
+                                    <td>
+                                        <span style="{{ $payment->statusStyle() }}">{{ $payment->statusLabel() }}</span>
+                                        @if ($payment->voided_at)
+                                            <div class="muted">Anulado {{ $payment->voided_at?->format('d/m/Y H:i') }}</div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $payment->reference ?: '—' }}
+                                        @if ($payment->void_reason)
+                                            <div class="muted">Motivo: {{ $payment->void_reason }}</div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $payment->receivedBy?->name ?? 'Sistema' }}
+                                        @if ($payment->voidedBy)
+                                            <div class="muted">Anuló: {{ $payment->voidedBy?->name }}</div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @can('credit_payments.void')
+                                            @if ($payment->canBeVoided())
+                                                <form method="POST" action="{{ route('credits.payments.void', [$credit, $payment]) }}" data-confirm="true" data-confirm-title="Anular pago" data-confirm-message="Se anulará el pago y las cuotas regresarán a pendiente o vencida según su fecha. Esta acción no toca caja formal.">
+                                                    @csrf
+                                                    <input class="input" name="void_reason" required minlength="5" maxlength="1000" placeholder="Motivo de anulación" style="min-width:220px; margin-bottom:8px;">
+                                                    <button class="btn" style="background:#fff; border:1px solid var(--danger); color:var(--danger);" type="submit">Anular</button>
+                                                </form>
+                                            @else
+                                                <span class="muted">Sin acciones</span>
+                                            @endif
+                                        @else
+                                            <span class="muted">Sin permiso</span>
+                                        @endcan
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="muted">No hay pagos registrados todavía.</td>
+                                    <td colspan="8" class="muted">No hay pagos registrados todavía.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -447,10 +480,27 @@
                         <article class="mobile-card">
                             <div class="mobile-card-title">{{ $payment->code }} · Q {{ number_format((float) $payment->amount, 2) }}</div>
                             <div class="mobile-card-subtitle">{{ $payment->methodLabel() }} · {{ $payment->paid_at?->format('d/m/Y H:i') }}</div>
+                            <div style="margin-top:10px;">
+                                <span style="{{ $payment->statusStyle() }}">{{ $payment->statusLabel() }}</span>
+                            </div>
                             <div class="mobile-card-grid">
                                 <div><span class="mobile-field-label">Cuotas</span><span class="mobile-field-value">{{ $payment->installments_count }}</span></div>
                                 <div><span class="mobile-field-label">Referencia</span><span class="mobile-field-value">{{ $payment->reference ?: '—' }}</span></div>
                             </div>
+
+                            @if ($payment->void_reason)
+                                <p class="muted" style="margin-top:10px;">Motivo: {{ $payment->void_reason }}</p>
+                            @endif
+
+                            @can('credit_payments.void')
+                                @if ($payment->canBeVoided())
+                                    <form method="POST" action="{{ route('credits.payments.void', [$credit, $payment]) }}" data-confirm="true" data-confirm-title="Anular pago" data-confirm-message="Se anulará el pago y las cuotas regresarán a pendiente o vencida según su fecha. Esta acción no toca caja formal." style="margin-top:12px;">
+                                        @csrf
+                                        <input class="input" name="void_reason" required minlength="5" maxlength="1000" placeholder="Motivo de anulación" style="margin-bottom:8px;">
+                                        <button class="btn" style="background:#fff; border:1px solid var(--danger); color:var(--danger);" type="submit">Anular</button>
+                                    </form>
+                                @endif
+                            @endcan
                         </article>
                     @empty
                         <p class="muted">No hay pagos registrados todavía.</p>

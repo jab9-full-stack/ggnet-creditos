@@ -11,6 +11,7 @@ use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CreditDisbursementController;
 use App\Http\Controllers\CreditInstallmentOverdueController;
 use App\Http\Controllers\CreditPaymentController;
+use App\Http\Controllers\CreditPaymentVoidController;
 use App\Http\Controllers\CreditRequestStatusController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
@@ -85,6 +86,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/credits/{credit}/mark-overdue', [CreditInstallmentOverdueController::class, 'store'])
         ->middleware('permission:credit_installments.mark_overdue')
         ->name('credits.installments.mark-overdue');
+
+    Route::post('/credits/{credit}/payments/{payment}/void', [CreditPaymentVoidController::class, 'store'])
+        ->middleware('permission:credit_payments.void')
+        ->name('credits.payments.void');
 
     Route::resource('credits', CreditController::class)
         ->only(['index', 'show'])
