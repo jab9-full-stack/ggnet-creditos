@@ -2050,6 +2050,12 @@
 
                 loaderHideTimer = window.setTimeout(function () {
                     loader.classList.remove('is-complete');
+                    // BIENESTAR_FIX_CONFIRM_FOCUS_BEFORE_ARIA_HIDDEN
+                    const activeConfirmElement = document.activeElement;
+                    const confirmBackdropElement = document.getElementById('confirm-backdrop');
+                    if (confirmBackdropElement && activeConfirmElement instanceof HTMLElement && confirmBackdropElement.contains(activeConfirmElement)) {
+                        activeConfirmElement.blur();
+                    }
                     loader.setAttribute('aria-hidden', 'true');
                 }, 220);
             }
@@ -2059,6 +2065,12 @@
 
                 window.clearTimeout(loaderHideTimer);
                 loader.classList.remove('is-active', 'is-complete');
+                // BIENESTAR_FIX_CONFIRM_FOCUS_BEFORE_ARIA_HIDDEN
+                const activeConfirmElement = document.activeElement;
+                const confirmBackdropElement = document.getElementById('confirm-backdrop');
+                if (confirmBackdropElement && activeConfirmElement instanceof HTMLElement && confirmBackdropElement.contains(activeConfirmElement)) {
+                    activeConfirmElement.blur();
+                }
                 loader.setAttribute('aria-hidden', 'true');
 
                 const main = currentMain();
@@ -2437,12 +2449,24 @@
 
             auditModalClose?.addEventListener('click', function () {
                 auditModal.classList.remove('is-active');
+                // BIENESTAR_FIX_CONFIRM_FOCUS_BEFORE_ARIA_HIDDEN
+                const activeConfirmElement = document.activeElement;
+                const confirmBackdropElement = document.getElementById('confirm-backdrop');
+                if (confirmBackdropElement && activeConfirmElement instanceof HTMLElement && confirmBackdropElement.contains(activeConfirmElement)) {
+                    activeConfirmElement.blur();
+                }
                 auditModal.setAttribute('aria-hidden', 'true');
             });
 
             auditModal?.addEventListener('click', function (event) {
                 if (event.target === auditModal) {
                     auditModal.classList.remove('is-active');
+                    // BIENESTAR_FIX_CONFIRM_FOCUS_BEFORE_ARIA_HIDDEN
+                    const activeConfirmElement = document.activeElement;
+                    const confirmBackdropElement = document.getElementById('confirm-backdrop');
+                    if (confirmBackdropElement && activeConfirmElement instanceof HTMLElement && confirmBackdropElement.contains(activeConfirmElement)) {
+                        activeConfirmElement.blur();
+                    }
                     auditModal.setAttribute('aria-hidden', 'true');
                 }
             });
@@ -2450,6 +2474,12 @@
             confirmCancel?.addEventListener('click', function () {
                 pendingConfirmForm = null;
                 confirmBackdrop.classList.remove('is-active');
+                // BIENESTAR_FIX_CONFIRM_FOCUS_BEFORE_ARIA_HIDDEN
+                const activeConfirmElement = document.activeElement;
+                const confirmBackdropElement = document.getElementById('confirm-backdrop');
+                if (confirmBackdropElement && activeConfirmElement instanceof HTMLElement && confirmBackdropElement.contains(activeConfirmElement)) {
+                    activeConfirmElement.blur();
+                }
                 confirmBackdrop.setAttribute('aria-hidden', 'true');
             });
 
@@ -2459,6 +2489,12 @@
                 const form = pendingConfirmForm;
                 pendingConfirmForm = null;
                 confirmBackdrop.classList.remove('is-active');
+                // BIENESTAR_FIX_CONFIRM_FOCUS_BEFORE_ARIA_HIDDEN
+                const activeConfirmElement = document.activeElement;
+                const confirmBackdropElement = document.getElementById('confirm-backdrop');
+                if (confirmBackdropElement && activeConfirmElement instanceof HTMLElement && confirmBackdropElement.contains(activeConfirmElement)) {
+                    activeConfirmElement.blur();
+                }
                 confirmBackdrop.setAttribute('aria-hidden', 'true');
 
                 softSubmit(form);
