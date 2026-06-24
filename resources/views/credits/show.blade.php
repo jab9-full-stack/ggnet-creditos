@@ -244,7 +244,7 @@
                         <h2 style="margin:0 0 6px; font-size:18px;">Registrar pago completo</h2>
                         <p class="muted" style="margin:0 0 16px;">No se aceptan pagos parciales. Selecciona cuántas cuotas completas se pagarán; el sistema aplica primero las vencidas y luego las pendientes.</p>
 
-                        <form method="POST" action="{{ route('credits.payments.store', $credit) }}" data-confirm="true" data-confirm-title="Registrar pago" data-confirm-message="Se pagarán cuotas completas empezando por la más antigua pendiente. Esta acción no crea movimiento de caja formal todavía.">
+                        <form method="POST" action="{{ route('credits.payments.store', $credit) }}" data-confirm="true" data-confirm-title="Registrar pago" data-confirm-message="Se pagarán cuotas completas empezando por la más antigua pendiente. Esta acción registrará movimiento financiero. Si el método es efectivo, requiere caja abierta.">
                             @csrf
 
                             <div class="form-grid-uniform">
@@ -407,7 +407,7 @@
         <section class="panel" style="margin-bottom:18px;">
             <div class="panel-body">
                 <h2 style="margin:0 0 6px; font-size:18px;">Pagos registrados</h2>
-                <p class="muted" style="margin:0 0 16px;">Pagos operativos aplicados a cuotas completas. Caja formal se trabajará en M05.</p>
+                <p class="muted" style="margin:0 0 16px;">Pagos aplicados a cuotas completas. Desde M05.2 los pagos nuevos generan movimiento financiero.</p>
 
                 <div class="desktop-table table-scroll">
                     <table class="table compact-table">

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CashSession;
 use App\Models\Agency;
 use App\Models\Client;
 use App\Models\Credit;
@@ -136,6 +137,8 @@ class CreditPaymentVoidManagementTest extends TestCase
 
     private function registerPayment(User $admin, Credit $credit, int $installmentsCount = 1): CreditPayment
     {
+        $this->openCashSession($admin);
+
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/payments", [
                 'installments_count' => $installmentsCount,
@@ -146,6 +149,23 @@ class CreditPaymentVoidManagementTest extends TestCase
 
         return CreditPayment::query()->where('credit_id', $credit->id)->latest()->firstOrFail();
     }
+
+    private function openCashSession(User $admin): CashSession
+    {
+        return CashSession::query()->create([
+            'agency_id' => $admin->agency_id,
+            'user_id' => $admin->id,
+            'code' => 'CAJ-TEST-'.uniqid(),
+            'status' => CashSession::STATUS_OPEN,
+            'opening_balance' => '0.00',
+            'opened_at' => now(),
+            'opened_by' => $admin->id,
+            'expected_cash_amount' => '0.00',
+            'created_by' => $admin->id,
+            'updated_by' => $admin->id,
+        ]);
+    }
+
 
     public function test_admin_can_void_applied_payment_and_revert_installments(): void
     {

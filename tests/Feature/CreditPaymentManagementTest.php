@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CashSession;
 use App\Models\Agency;
 use App\Models\Client;
 use App\Models\Credit;
@@ -136,6 +137,23 @@ class CreditPaymentManagementTest extends TestCase
         return $credit;
     }
 
+    private function openCashSession(User $admin): CashSession
+    {
+        return CashSession::query()->create([
+            'agency_id' => $admin->agency_id,
+            'user_id' => $admin->id,
+            'code' => 'CAJ-TEST-'.uniqid(),
+            'status' => CashSession::STATUS_OPEN,
+            'opening_balance' => '0.00',
+            'opened_at' => now(),
+            'opened_by' => $admin->id,
+            'expected_cash_amount' => '0.00',
+            'created_by' => $admin->id,
+            'updated_by' => $admin->id,
+        ]);
+    }
+
+
     public function test_admin_can_register_one_full_installment_payment(): void
     {
         Carbon::setTestNow('2026-07-01 11:00:00');
@@ -143,6 +161,8 @@ class CreditPaymentManagementTest extends TestCase
         $admin = $this->admin();
         $client = $this->client($admin);
         $credit = $this->disbursedCredit($admin, $client);
+
+        $this->openCashSession($admin);
 
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/payments", [
@@ -189,6 +209,8 @@ class CreditPaymentManagementTest extends TestCase
         $admin = $this->admin();
         $client = $this->client($admin);
         $credit = $this->disbursedCredit($admin, $client);
+
+        $this->openCashSession($admin);
 
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/payments", [

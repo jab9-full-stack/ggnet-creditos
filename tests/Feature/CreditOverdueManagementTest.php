@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CashSession;
 use App\Models\Agency;
 use App\Models\Client;
 use App\Models\Credit;
@@ -137,6 +138,23 @@ class CreditOverdueManagementTest extends TestCase
         return $credit;
     }
 
+    private function openCashSession(User $admin): CashSession
+    {
+        return CashSession::query()->create([
+            'agency_id' => $admin->agency_id,
+            'user_id' => $admin->id,
+            'code' => 'CAJ-TEST-'.uniqid(),
+            'status' => CashSession::STATUS_OPEN,
+            'opening_balance' => '0.00',
+            'opened_at' => now(),
+            'opened_by' => $admin->id,
+            'expected_cash_amount' => '0.00',
+            'created_by' => $admin->id,
+            'updated_by' => $admin->id,
+        ]);
+    }
+
+
     public function test_admin_can_mark_credit_installments_as_overdue(): void
     {
         Carbon::setTestNow('2026-06-17 08:00:00');
@@ -206,6 +224,8 @@ class CreditOverdueManagementTest extends TestCase
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/mark-overdue")
             ->assertRedirect("/credits/{$credit->id}");
+
+        $this->openCashSession($admin);
 
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/payments", [

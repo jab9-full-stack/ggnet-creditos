@@ -101,6 +101,13 @@ class CreditPaymentVoidService
 
             $freshPayment = $lockedPayment->fresh(['credit', 'client', 'installments']);
 
+            app(CashMovementService::class)->voidCreditPaymentMovement(
+                payment: $freshPayment,
+                reason: $reason,
+                user: $user,
+                auditLogger: $auditLogger,
+            );
+
             $auditLogger->log(
                 event: 'credit_payment.voided',
                 module: 'credit_payments',

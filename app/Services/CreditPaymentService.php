@@ -35,6 +35,10 @@ class CreditPaymentService
             throw new InvalidArgumentException('La referencia es obligatoria para depósito o transferencia.');
         }
 
+        if ($method === CreditPayment::METHOD_CASH && ! app(\App\Services\CashSessionService::class)->activeSessionFor($user)) {
+            throw new InvalidArgumentException('Debes abrir caja antes de registrar pagos en efectivo.');
+        }
+
         return DB::transaction(function () use (
             $credit,
             $installmentsCount,
@@ -103,6 +107,12 @@ class CreditPaymentService
                 ->count();
 
             $oldCreditStatus = $lockedCredit->status;
+
+            app(CashMovementService::class)->createCreditPaymentMovement(
+                payment: $payment,
+                user: $user,
+                auditLogger: $auditLogger,
+            );
 
             if ($remainingPending === 0) {
                 $lockedCredit->fill([
