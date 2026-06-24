@@ -21,6 +21,15 @@
                 @can('clients.view')
                     <a class="btn" style="background:#ffffff; border:1px solid var(--line); color:#111827; box-shadow:0 4px 12px rgba(15,23,42,.06);" href="{{ route('clients.show', $credit->client) }}">Ver expediente</a>
                 @endcan
+
+                @can('credit_installments.mark_overdue')
+                    @if ($credit->status === \App\Models\Credit::STATUS_DISBURSED)
+                        <form method="POST" action="{{ route('credits.installments.mark-overdue', $credit) }}" data-confirm="true" data-confirm-title="Actualizar vencimientos" data-confirm-message="Se revisarán las cuotas pendientes y se marcarán como vencidas las que tengan fecha anterior a hoy. No se aplicarán recargos.">
+                            @csrf
+                            <button class="btn" style="background:#ffffff; border:1px solid var(--line); color:#111827; box-shadow:0 4px 12px rgba(15,23,42,.06);" type="submit">Actualizar vencimientos</button>
+                        </form>
+                    @endif
+                @endcan
             </div>
         </header>
 
@@ -37,14 +46,27 @@
         @endif
 
         @php
-            $pendingInstallments = $credit->installments
-                ->where('status', \App\Models\CreditInstallment::STATUS_PENDING)
-                ->sortBy('number')
+            $payableInstallments = $credit->installments
+                ->whereIn('status', [
+                    \App\Models\CreditInstallment::STATUS_OVERDUE,
+                    \App\Models\CreditInstallment::STATUS_PENDING,
+                ])
+                ->sortBy([
+                    ['due_date', 'asc'],
+                    ['number', 'asc'],
+                ])
                 ->values();
 
             $paidInstallmentsCount = $credit->installments
                 ->where('status', \App\Models\CreditInstallment::STATUS_PAID)
                 ->count();
+
+            $overdueInstallments = $credit->installments
+                ->where('status', \App\Models\CreditInstallment::STATUS_OVERDUE)
+                ->values();
+
+            $overdueInstallmentsCount = $overdueInstallments->count();
+            $overdueAmount = round((float) $overdueInstallments->sum(fn ($item) => (float) $item->total_amount), 2);
 
             $paidAmount = $credit->paidAmount();
             $remainingAmount = $credit->remainingAmount();
@@ -81,6 +103,23 @@
             <div class="metric">
                 <span>Cuotas</span>
                 <strong>{{ $paidInstallmentsCount }}/{{ $credit->installments->count() }} pagadas</strong>
+            </div>
+        </section>
+
+        <section class="grid grid-3" style="margin-bottom:18px;">
+            <div class="metric">
+                <span>Cuotas vencidas</span>
+                <strong>{{ $overdueInstallmentsCount }}</strong>
+            </div>
+
+            <div class="metric">
+                <span>Saldo vencido</span>
+                <strong>Q {{ number_format($overdueAmount, 2) }}</strong>
+            </div>
+
+            <div class="metric">
+                <span>Vencimientos</span>
+                <strong>{{ $overdueInstallmentsCount > 0 ? 'Revisar' : 'Al día' }}</strong>
             </div>
         </section>
 
@@ -186,12 +225,24 @@
             </div>
         </section>
 
+        @if ($overdueInstallmentsCount > 0)
+            <section class="panel" style="margin-bottom:18px; border:1px solid rgba(220,38,38,.28); background:#fff7f7;">
+                <div class="panel-body">
+                    <h2 style="margin:0 0 6px; font-size:18px; color:var(--danger);">Cuotas vencidas</h2>
+                    <p style="margin:0; color:#7f1d1d;">
+                        Este crédito tiene {{ $overdueInstallmentsCount }} cuota(s) vencida(s) por Q {{ number_format($overdueAmount, 2) }}.
+                        No se aplican recargos en este módulo.
+                    </p>
+                </div>
+            </section>
+        @endif
+
         @can('credit_payments.create')
             @if ($credit->canReceivePayments())
                 <section class="panel" style="margin-bottom:18px; border:1px solid rgba(13,148,136,.28);">
                     <div class="panel-body">
                         <h2 style="margin:0 0 6px; font-size:18px;">Registrar pago completo</h2>
-                        <p class="muted" style="margin:0 0 16px;">No se aceptan pagos parciales. Selecciona cuántas cuotas completas se pagarán; el sistema calcula el monto automáticamente.</p>
+                        <p class="muted" style="margin:0 0 16px;">No se aceptan pagos parciales. Selecciona cuántas cuotas completas se pagarán; el sistema aplica primero las vencidas y luego las pendientes.</p>
 
                         <form method="POST" action="{{ route('credits.payments.store', $credit) }}" data-confirm="true" data-confirm-title="Registrar pago" data-confirm-message="Se pagarán cuotas completas empezando por la más antigua pendiente. Esta acción no crea movimiento de caja formal todavía.">
                             @csrf
@@ -201,9 +252,9 @@
                                     <span class="label">Cuotas completas a pagar <span style="color:var(--danger);">*</span></span>
                                     <select class="input" name="installments_count" required>
                                         <option value="">Seleccionar</option>
-                                        @for ($i = 1; $i <= $pendingInstallments->count(); $i++)
+                                        @for ($i = 1; $i <= $payableInstallments->count(); $i++)
                                             @php
-                                                $amountForOption = $pendingInstallments->take($i)->sum(fn ($item) => (float) $item->total_amount);
+                                                $amountForOption = $payableInstallments->take($i)->sum(fn ($item) => (float) $item->total_amount);
                                             @endphp
                                             <option value="{{ $i }}" @selected((string) old('installments_count') === (string) $i)>
                                                 {{ $i }} cuota{{ $i > 1 ? 's' : '' }} · Q {{ number_format($amountForOption, 2) }}
@@ -284,7 +335,12 @@
                                     <td><strong>Q {{ number_format((float) $installment->total_amount, 2) }}</strong></td>
                                     <td>Q {{ number_format((float) $installment->paid_amount, 2) }}</td>
                                     <td>{{ $installment->payment?->code ?? '—' }}</td>
-                                    <td><span style="{{ $installment->statusStyle() }}">{{ $installment->statusLabel() }}</span></td>
+                                    <td>
+                                        <span style="{{ $installment->statusStyle() }}">{{ $installment->statusLabel() }}</span>
+                                        @if ($installment->overdue_at)
+                                            <div class="muted">Marcada {{ $installment->overdue_at?->format('d/m/Y H:i') }}</div>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>

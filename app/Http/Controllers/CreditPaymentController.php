@@ -23,14 +23,14 @@ class CreditPaymentController extends Controller
     ): RedirectResponse {
         abort_unless($request->user()?->can('credit_payments.create'), 403);
 
-        $pendingInstallmentsCount = $credit->installments()
-            ->where('status', CreditInstallment::STATUS_PENDING)
+        $payableInstallmentsCount = $credit->installments()
+            ->whereIn('status', [CreditInstallment::STATUS_PENDING, CreditInstallment::STATUS_OVERDUE])
             ->count();
 
         $disbursedDate = $credit->disbursed_at?->toDateString() ?? today()->toDateString();
 
         $data = $request->validate([
-            'installments_count' => ['required', 'integer', 'min:1', 'max:'.$pendingInstallmentsCount],
+            'installments_count' => ['required', 'integer', 'min:1', 'max:'.$payableInstallmentsCount],
             'payment_method' => ['required', Rule::in(array_keys(CreditPayment::METHODS))],
             'reference' => ['nullable', 'string', 'max:160', 'required_if:payment_method,'.CreditPayment::METHOD_DEPOSIT, 'required_if:payment_method,'.CreditPayment::METHOD_TRANSFER],
             'payment_date' => ['required', 'date', 'after_or_equal:'.$disbursedDate, 'before_or_equal:today'],

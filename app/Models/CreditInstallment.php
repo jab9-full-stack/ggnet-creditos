@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'total_amount',
     'paid_amount',
     'paid_at',
+    'overdue_at',
     'notes',
     'created_by',
     'updated_by',
@@ -96,6 +97,7 @@ class CreditInstallment extends Model
             'total_amount' => 'decimal:2',
             'paid_amount' => 'decimal:2',
             'paid_at' => 'datetime',
+            'overdue_at' => 'datetime',
         ];
     }
 }

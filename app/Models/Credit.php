@@ -118,7 +118,9 @@ class Credit extends Model
     public function canReceivePayments(): bool
     {
         return $this->status === self::STATUS_DISBURSED
-            && $this->installments()->where('status', CreditInstallment::STATUS_PENDING)->exists();
+            && $this->installments()
+                ->whereIn('status', [CreditInstallment::STATUS_PENDING, CreditInstallment::STATUS_OVERDUE])
+                ->exists();
     }
 
     public function paidAmount(): float
@@ -134,6 +136,18 @@ class Credit extends Model
     public function pendingInstallmentsCount(): int
     {
         return $this->installments()->where('status', CreditInstallment::STATUS_PENDING)->count();
+    }
+
+    public function overdueInstallmentsCount(): int
+    {
+        return $this->installments()->where('status', CreditInstallment::STATUS_OVERDUE)->count();
+    }
+
+    public function overdueAmount(): float
+    {
+        return round((float) $this->installments()
+            ->where('status', CreditInstallment::STATUS_OVERDUE)
+            ->sum('total_amount'), 2);
     }
 
     protected function casts(): array

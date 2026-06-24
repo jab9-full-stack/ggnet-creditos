@@ -18,6 +18,7 @@ class CreditPermissionSeeder extends Seeder
             'credits.disburse',
             'credit_payments.view',
             'credit_payments.create',
+            'credit_installments.mark_overdue',
         ];
 
         foreach ($permissions as $permission) {
@@ -33,6 +34,7 @@ class CreditPermissionSeeder extends Seeder
             'manager' => [
                 'credits.view',
                 'credit_payments.view',
+                'credit_installments.mark_overdue',
             ],
             'analyst' => [
                 'credits.view',

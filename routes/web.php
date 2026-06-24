@@ -9,6 +9,7 @@ use App\Http\Controllers\ClientReferenceController;
 use App\Http\Controllers\CreditRequestController;
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CreditDisbursementController;
+use App\Http\Controllers\CreditInstallmentOverdueController;
 use App\Http\Controllers\CreditPaymentController;
 use App\Http\Controllers\CreditRequestStatusController;
 use App\Http\Controllers\DashboardController;
@@ -80,6 +81,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/credits/{credit}/payments', [CreditPaymentController::class, 'store'])
         ->middleware('permission:credit_payments.create')
         ->name('credits.payments.store');
+
+    Route::post('/credits/{credit}/mark-overdue', [CreditInstallmentOverdueController::class, 'store'])
+        ->middleware('permission:credit_installments.mark_overdue')
+        ->name('credits.installments.mark-overdue');
 
     Route::resource('credits', CreditController::class)
         ->only(['index', 'show'])

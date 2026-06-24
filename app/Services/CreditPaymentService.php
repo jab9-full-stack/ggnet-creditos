@@ -54,17 +54,18 @@ class CreditPaymentService
                 throw new InvalidArgumentException('Solo se pueden registrar pagos en créditos entregados.');
             }
 
-            $pendingInstallments = $lockedCredit->installments()
-                ->where('status', CreditInstallment::STATUS_PENDING)
+            $payableInstallments = $lockedCredit->installments()
+                ->whereIn('status', [CreditInstallment::STATUS_OVERDUE, CreditInstallment::STATUS_PENDING])
+                ->orderBy('due_date')
                 ->orderBy('number')
                 ->lockForUpdate()
                 ->get();
 
-            if ($pendingInstallments->count() < $installmentsCount) {
-                throw new InvalidArgumentException('El crédito no tiene suficientes cuotas pendientes para ese pago.');
+            if ($payableInstallments->count() < $installmentsCount) {
+                throw new InvalidArgumentException('El crédito no tiene suficientes cuotas pendientes o vencidas para ese pago.');
             }
 
-            $selectedInstallments = $pendingInstallments->take($installmentsCount)->values();
+            $selectedInstallments = $payableInstallments->take($installmentsCount)->values();
 
             $amount = round((float) $selectedInstallments->sum(fn (CreditInstallment $installment): float => (float) $installment->total_amount), 2);
 
@@ -97,7 +98,7 @@ class CreditPaymentService
             }
 
             $remainingPending = $lockedCredit->installments()
-                ->where('status', CreditInstallment::STATUS_PENDING)
+                ->whereIn('status', [CreditInstallment::STATUS_PENDING, CreditInstallment::STATUS_OVERDUE])
                 ->count();
 
             $oldCreditStatus = $lockedCredit->status;
