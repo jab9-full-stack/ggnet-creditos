@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="app-shell">
     @include('partials.sidebar')
 
-    <main class="main-content">
+    <main class="main">
         <div class="page-header">
             <div>
                 <h1>Caja</h1>
@@ -160,8 +161,8 @@
                 <h2 style="margin:0 0 6px; font-size:18px;">Movimientos del día</h2>
                 <p class="muted" style="margin:0 0 16px;">Ingresos, egresos, ajustes y anulaciones del día.</p>
 
-                <div class="table-responsive">
-                    <table class="table">
+                <div class="desktop-table table-scroll">
+                    <table class="table compact-table">
                         <thead>
                             <tr>
                                 <th>Código</th>
@@ -269,8 +270,8 @@
                 <h2 style="margin:0 0 6px; font-size:18px;">Últimas sesiones de caja</h2>
                 <p class="muted" style="margin:0 0 16px;">Historial básico de aperturas y cierres.</p>
 
-                <div class="table-responsive">
-                    <table class="table">
+                <div class="desktop-table table-scroll">
+                    <table class="table compact-table">
                         <thead>
                             <tr>
                                 <th>Código</th>
@@ -310,4 +311,5 @@
             </div>
         </section>
     </main>
+</div>
 @endsection
