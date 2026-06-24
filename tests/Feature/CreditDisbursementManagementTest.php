@@ -135,25 +135,27 @@ class CreditDisbursementManagementTest extends TestCase
 
         $this->assertSame(4, $credit->installments()->count());
 
-        $this->assertDatabaseHas('credit_installments', [
-            'credit_id' => $credit->id,
-            'number' => 1,
-            'due_date' => '2026-07-01',
-            'principal_amount' => '450.00',
-            'interest_amount' => '112.50',
-            'total_amount' => '562.50',
-            'status' => CreditInstallment::STATUS_PENDING,
-        ]);
+        $firstInstallment = CreditInstallment::query()
+            ->where('credit_id', $credit->id)
+            ->where('number', 1)
+            ->firstOrFail();
 
-        $this->assertDatabaseHas('credit_installments', [
-            'credit_id' => $credit->id,
-            'number' => 4,
-            'due_date' => '2026-07-22',
-            'principal_amount' => '450.00',
-            'interest_amount' => '112.50',
-            'total_amount' => '562.50',
-            'status' => CreditInstallment::STATUS_PENDING,
-        ]);
+        $fourthInstallment = CreditInstallment::query()
+            ->where('credit_id', $credit->id)
+            ->where('number', 4)
+            ->firstOrFail();
+
+        $this->assertSame('2026-07-01', $firstInstallment->due_date->toDateString());
+        $this->assertSame('450.00', $firstInstallment->principal_amount);
+        $this->assertSame('112.50', $firstInstallment->interest_amount);
+        $this->assertSame('562.50', $firstInstallment->total_amount);
+        $this->assertSame(CreditInstallment::STATUS_PENDING, $firstInstallment->status);
+
+        $this->assertSame('2026-07-22', $fourthInstallment->due_date->toDateString());
+        $this->assertSame('450.00', $fourthInstallment->principal_amount);
+        $this->assertSame('112.50', $fourthInstallment->interest_amount);
+        $this->assertSame('562.50', $fourthInstallment->total_amount);
+        $this->assertSame(CreditInstallment::STATUS_PENDING, $fourthInstallment->status);
 
         $totalInstallments = CreditInstallment::query()
             ->where('credit_id', $credit->id)
