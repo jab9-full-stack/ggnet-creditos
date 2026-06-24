@@ -147,7 +147,7 @@ class CreditPaymentManagementTest extends TestCase
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/payments", [
                 'installments_count' => 1,
-                'method' => CreditPayment::METHOD_CASH,
+                'payment_method' => CreditPayment::METHOD_CASH,
                 'payment_date' => '2026-07-01',
             ])
             ->assertRedirect("/credits/{$credit->id}");
@@ -193,7 +193,7 @@ class CreditPaymentManagementTest extends TestCase
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/payments", [
                 'installments_count' => 4,
-                'method' => CreditPayment::METHOD_CASH,
+                'payment_method' => CreditPayment::METHOD_CASH,
                 'payment_date' => '2026-07-01',
             ])
             ->assertRedirect("/credits/{$credit->id}");
@@ -225,7 +225,7 @@ class CreditPaymentManagementTest extends TestCase
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/payments", [
                 'installments_count' => 1,
-                'method' => CreditPayment::METHOD_DEPOSIT,
+                'payment_method' => CreditPayment::METHOD_DEPOSIT,
                 'payment_date' => '2026-07-01',
             ])
             ->assertSessionHasErrors('reference');
@@ -245,7 +245,7 @@ class CreditPaymentManagementTest extends TestCase
         $this->actingAs($admin)
             ->post("/credits/{$credit->id}/payments", [
                 'installments_count' => 5,
-                'method' => CreditPayment::METHOD_CASH,
+                'payment_method' => CreditPayment::METHOD_CASH,
                 'payment_date' => '2026-07-01',
             ])
             ->assertSessionHasErrors('installments_count');
@@ -281,7 +281,7 @@ class CreditPaymentManagementTest extends TestCase
 
         $this->post("/credits/{$credit->id}/payments", [
             'installments_count' => 1,
-            'method' => CreditPayment::METHOD_CASH,
+            'payment_method' => CreditPayment::METHOD_CASH,
             'payment_date' => '2026-07-01',
         ])->assertRedirect('/login');
     }

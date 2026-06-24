@@ -214,10 +214,10 @@
 
                                 <label class="form-group">
                                     <span class="label">Método <span style="color:var(--danger);">*</span></span>
-                                    <select class="input" name="method" required>
+                                    <select class="input" name="payment_method" required>
                                         <option value="">Seleccionar método</option>
                                         @foreach (\App\Models\CreditPayment::METHODS as $value => $label)
-                                            <option value="{{ $value }}" @selected(old('method') === $value)>{{ $label }}</option>
+                                            <option value="{{ $value }}" @selected(old('payment_method') === $value)>{{ $label }}</option>
                                         @endforeach
                                     </select>
                                 </label>
