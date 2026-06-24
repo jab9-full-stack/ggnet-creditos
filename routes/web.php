@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\CashMovementController;
+use App\Http\Controllers\CashSessionController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientDocumentController;
 use App\Http\Controllers\ClientReferenceController;
@@ -111,6 +113,27 @@ Route::middleware('auth')->group(function (): void {
         ->parameters(['documents' => 'document'])
         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
         ->middleware('permission:client_documents.view');
+
+    Route::get('/cash', [CashSessionController::class, 'index'])
+        ->middleware('permission:cash.view')
+        ->name('cash.index');
+
+    Route::post('/cash/open', [CashSessionController::class, 'open'])
+        ->middleware('permission:cash.open')
+        ->name('cash.open');
+
+    Route::post('/cash/{cashSession}/close', [CashSessionController::class, 'close'])
+        ->middleware('permission:cash.close')
+        ->name('cash.close');
+
+    Route::post('/cash/{cashSession}/movements', [CashMovementController::class, 'store'])
+        ->middleware('permission:cash_movements.create')
+        ->name('cash.movements.store');
+
+    Route::post('/cash/{cashSession}/movements/{movement}/void', [CashMovementController::class, 'voidMovement'])
+        ->middleware('permission:cash_movements.void')
+        ->name('cash.movements.void');
+
 
     Route::get('/audit-logs', [AuditLogController::class, 'index'])
         ->middleware('permission:audit_logs.view')
