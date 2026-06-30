@@ -289,7 +289,7 @@ class CreditPaymentReceiptManagementTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_receipt_view_renders_correctly(): void
+    public function test_receipt_pdf_streams_correctly(): void
     {
         $admin = $this->userWithPermissions([
             'credits.view',
@@ -310,13 +310,12 @@ class CreditPaymentReceiptManagementTest extends TestCase
         $payment = CreditPayment::query()->firstOrFail();
         $receipt = CreditPaymentReceipt::query()->firstOrFail();
 
-        $this->actingAs($admin)
-            ->get("/credits/{$credit->id}/payments/{$payment->id}/receipt")
-            ->assertStatus(200)
-            ->assertSee($receipt->code)
-            ->assertSee($payment->code)
-            ->assertSee('Recibo de pago')
-            ->assertSee('Total recibido')
-            ->assertSee('Q 562.50');
+        $response = $this->actingAs($admin)
+            ->get("/credits/{$credit->id}/payments/{$payment->id}/receipt");
+
+        $response->assertStatus(200);
+
+        $this->assertStringContainsString('application/pdf', $response->headers->get('content-type') ?? '');
+        $this->assertStringContainsString($receipt->code.'-'.$payment->code.'.pdf', $response->headers->get('content-disposition') ?? '');
     }
 }

@@ -184,8 +184,8 @@
                                     <td>
                                         @can('credit_payment_receipts.view')
                                             @if ($movement->creditPayment?->receipt)
-                                                <a class="btn" style="background:#eef2f7; padding:8px 10px;" href="{{ route('credits.payments.receipt.show', [$movement->creditPayment->credit_id, $movement->creditPayment]) }}">
-                                                    {{ $movement->creditPayment->receipt->code }}
+                                                <a class="btn" style="background:#eef2f7; padding:8px 10px;" href="{{ route('credits.payments.receipt.show', [$movement->creditPayment->credit_id, $movement->creditPayment]) }}" target="_blank" rel="noopener">
+                                                    PDF {{ $movement->creditPayment->receipt->code }}
                                                 </a>
                                             @else
                                                 <span class="muted">—</span>
@@ -265,7 +265,7 @@
                                     <span class="mobile-field-value">
                                         @can('credit_payment_receipts.view')
                                             @if ($movement->creditPayment?->receipt)
-                                                <a href="{{ route('credits.payments.receipt.show', [$movement->creditPayment->credit_id, $movement->creditPayment]) }}">{{ $movement->creditPayment->receipt->code }}</a>
+                                                <a href="{{ route('credits.payments.receipt.show', [$movement->creditPayment->credit_id, $movement->creditPayment]) }}" target="_blank" rel="noopener">PDF {{ $movement->creditPayment->receipt->code }}</a>
                                             @else
                                                 —
                                             @endif

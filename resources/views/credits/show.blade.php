@@ -432,8 +432,8 @@
                                     <td>
                                         @can('credit_payment_receipts.view')
                                             @if ($payment->receipt)
-                                                <a class="btn" style="background:#eef2f7; padding:8px 10px;" href="{{ route('credits.payments.receipt.show', [$credit, $payment]) }}">
-                                                    {{ $payment->receipt->code }}
+                                                <a class="btn" style="background:#eef2f7; padding:8px 10px;" href="{{ route('credits.payments.receipt.show', [$credit, $payment]) }}" target="_blank" rel="noopener">
+                                                    PDF {{ $payment->receipt->code }}
                                                 </a>
                                                 @if ($payment->receipt->status === \App\Models\CreditPaymentReceipt::STATUS_VOIDED)
                                                     <div class="muted">Anulado</div>
@@ -508,7 +508,7 @@
                                     <span class="mobile-field-value">
                                         @can('credit_payment_receipts.view')
                                             @if ($payment->receipt)
-                                                <a href="{{ route('credits.payments.receipt.show', [$credit, $payment]) }}">{{ $payment->receipt->code }}</a>
+                                                <a href="{{ route('credits.payments.receipt.show', [$credit, $payment]) }}" target="_blank" rel="noopener">PDF {{ $payment->receipt->code }}</a>
                                             @else
                                                 —
                                             @endif
