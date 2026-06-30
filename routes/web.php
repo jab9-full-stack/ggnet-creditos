@@ -13,6 +13,7 @@ use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CreditDisbursementController;
 use App\Http\Controllers\CreditInstallmentOverdueController;
 use App\Http\Controllers\CreditLateFeeController;
+use App\Http\Controllers\CreditLateFeeSettingController;
 use App\Http\Controllers\CreditPaymentController;
 use App\Http\Controllers\CreditPaymentReceiptController;
 use App\Http\Controllers\CreditPaymentVoidController;
@@ -148,6 +149,14 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/audit-logs', [AuditLogController::class, 'index'])
         ->middleware('permission:audit_logs.view')
         ->name('audit-logs.index');
+
+    Route::get('/settings/credit-late-fees', [CreditLateFeeSettingController::class, 'edit'])
+        ->middleware('permission:settings.view')
+        ->name('settings.credit-late-fees.edit');
+
+    Route::put('/settings/credit-late-fees', [CreditLateFeeSettingController::class, 'update'])
+        ->middleware('permission:settings.update')
+        ->name('settings.credit-late-fees.update');
 
     Route::get('/settings', [SettingController::class, 'index'])
         ->middleware('permission:settings.view')

@@ -41,7 +41,8 @@
         @endcan
 
         @can('settings.view')
-            <a class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">Parámetros</a>
+            <a class="nav-link {{ request()->routeIs('settings.index') ? 'active' : '' }}" href="{{ route('settings.index') }}">Parámetros</a>
+            <a class="nav-link {{ request()->routeIs('settings.credit-late-fees.*') ? 'active' : '' }}" href="{{ route('settings.credit-late-fees.edit') }}">Configuración de mora</a>
         @endcan
     </nav>
 

@@ -29,8 +29,8 @@ class CreditLateFeeService
         return [
             'enabled' => $this->booleanSetting(self::SETTING_ENABLED, false),
             'type' => $type,
-            'fixed_amount' => max(0, round((float) $this->setting(self::SETTING_FIXED_AMOUNT, '0.00'), 2)),
-            'percentage' => max(0, round((float) $this->setting(self::SETTING_PERCENTAGE, '0.00'), 4)),
+            'fixed_amount' => max(0.0, round((float) $this->setting(self::SETTING_FIXED_AMOUNT, '0.00'), 2)),
+            'percentage' => max(0.0, round((float) $this->setting(self::SETTING_PERCENTAGE, '0.00'), 4)),
             'grace_days' => max(0, (int) $this->setting(self::SETTING_GRACE_DAYS, '0')),
         ];
     }

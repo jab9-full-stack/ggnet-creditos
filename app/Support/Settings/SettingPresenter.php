@@ -9,6 +9,11 @@ class SettingPresenter
     public static function title(Setting $setting): string
     {
         return match ($setting->key) {
+            'credit_late_fee_enabled' => 'Mora activa',
+            'credit_late_fee_type' => 'Tipo de mora',
+            'credit_late_fee_fixed_amount' => 'Monto fijo de mora',
+            'credit_late_fee_percentage' => 'Porcentaje de mora',
+            'credit_late_fee_grace_days' => 'Días de gracia',
             'app.display_name' => 'Nombre visible del sistema',
             'app.country' => 'País operativo',
             'security.session_timeout_minutes' => 'Tiempo de sesión administrativa',
@@ -20,6 +25,11 @@ class SettingPresenter
     public static function help(Setting $setting): string
     {
         return match ($setting->key) {
+            'credit_late_fee_enabled' => 'Define si el sistema puede aplicar recargos de mora a cuotas vencidas.',
+            'credit_late_fee_type' => 'Monto fijo o porcentaje sobre capital más interés de la cuota.',
+            'credit_late_fee_fixed_amount' => 'Cantidad exacta de mora por cuota vencida.',
+            'credit_late_fee_percentage' => 'Porcentaje de mora sobre capital más interés de la cuota.',
+            'credit_late_fee_grace_days' => 'Cantidad de días de gracia antes de aplicar mora.',
             'app.display_name' => 'Nombre que aparece en pantallas, encabezados y referencias internas.',
             'app.country' => 'País base para la operación inicial del sistema.',
             'security.session_timeout_minutes' => 'Cantidad de minutos sugeridos antes de expirar una sesión administrativa.',
@@ -31,6 +41,7 @@ class SettingPresenter
     public static function groupLabel(string $group): string
     {
         return match ($group) {
+            'credits' => 'Créditos y cartera',
             'app' => 'Aplicación',
             'security' => 'Seguridad',
             'audit' => 'Auditoría',
