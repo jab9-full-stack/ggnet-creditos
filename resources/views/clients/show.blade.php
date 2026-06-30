@@ -5,6 +5,22 @@
     @include('partials.sidebar')
 
     <main class="main">
+
+        @if ($client->credit_blocked_at)
+            <section class="panel" style="margin-bottom:18px; border-color:#fed7aa; background:#fff7ed;">
+                <div class="panel-body">
+                    <h2 style="margin:0 0 6px; font-size:18px; color:#9a3412;">Bloqueado para nuevo crédito</h2>
+                    <p style="margin:0; color:#7c2d12;">
+                        Este cliente tiene atraso registrado. No se cobra recargo de mora, pero queda bloqueado para nuevos créditos.
+                    </p>
+                    <p class="muted" style="margin:8px 0 0;">
+                        {{ $client->credit_block_reason ?: 'Atraso registrado en cartera.' }}
+                    </p>
+                </div>
+            </section>
+        @endif
+
+
         <header class="topbar">
             <div>
                 <h1 class="page-title">Expediente del cliente</h1>

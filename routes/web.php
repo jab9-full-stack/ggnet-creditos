@@ -11,6 +11,7 @@ use App\Http\Controllers\ClientReferenceController;
 use App\Http\Controllers\CreditRequestController;
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CreditDisbursementController;
+use App\Http\Controllers\CreditDelinquencyPolicyController;
 use App\Http\Controllers\CreditInstallmentOverdueController;
 use App\Http\Controllers\CreditLateFeeController;
 use App\Http\Controllers\CreditLateFeeSettingController;
@@ -87,6 +88,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/credits/{credit}/payments', [CreditPaymentController::class, 'store'])
         ->middleware('permission:credit_payments.create')
         ->name('credits.payments.store');
+
+    Route::post('/credits/{credit}/process-delinquency', [CreditDelinquencyPolicyController::class, 'store'])
+        ->middleware('permission:credit_installments.mark_overdue')
+        ->name('credits.installments.process-delinquency');
 
     Route::post('/credits/{credit}/mark-overdue', [CreditInstallmentOverdueController::class, 'store'])
         ->middleware('permission:credit_installments.mark_overdue')

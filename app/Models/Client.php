@@ -87,9 +87,24 @@ class Client extends Model
             ->implode(' ');
     }
 
+
+    public function isCreditBlocked(): bool
+    {
+        return (bool) $this->credit_blocked_at;
+    }
+
+    public function creditBlockLabel(): string
+    {
+        return $this->isCreditBlocked()
+            ? 'Bloqueado para nuevo crédito'
+            : 'Habilitado para nuevo crédito';
+    }
+
     protected function casts(): array
     {
         return [
+            'credit_blocked_at' => 'datetime',
+            'credit_last_delinquency_at' => 'datetime',
             'birth_date' => 'date',
         ];
     }

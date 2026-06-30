@@ -21,31 +21,31 @@ class CreditLateFeeSettingSeeder extends Seeder
                 'key' => CreditLateFeeService::SETTING_ENABLED,
                 'value' => false,
                 'type' => 'boolean',
-                'description' => 'Activa o desactiva la aplicación controlada de mora en cuotas vencidas.',
+                'description' => 'Política vigente: la mora no cobra recargos monetarios; el atraso bloquea nuevos créditos.',
             ],
             [
                 'key' => CreditLateFeeService::SETTING_TYPE,
                 'value' => CreditLateFeeService::TYPE_FIXED,
                 'type' => 'string',
-                'description' => 'Tipo de mora: fixed para monto fijo o percentage para porcentaje sobre capital más interés de la cuota.',
+                'description' => 'Referencia técnica conservada por compatibilidad. No se usa para cobrar recargos.',
             ],
             [
                 'key' => CreditLateFeeService::SETTING_FIXED_AMOUNT,
                 'value' => '0.00',
                 'type' => 'decimal',
-                'description' => 'Monto fijo de mora por cuota vencida. Se aplica una sola vez por cuota.',
+                'description' => 'Siempre Q0.00. La mora no genera cobro adicional.',
             ],
             [
                 'key' => CreditLateFeeService::SETTING_PERCENTAGE,
                 'value' => '0.00',
                 'type' => 'decimal',
-                'description' => 'Porcentaje de mora por cuota vencida sobre capital más interés. Se aplica una sola vez por cuota.',
+                'description' => 'Siempre 0%. La mora no genera cobro adicional.',
             ],
             [
                 'key' => CreditLateFeeService::SETTING_GRACE_DAYS,
                 'value' => 0,
                 'type' => 'integer',
-                'description' => 'Días de gracia antes de aplicar mora. Con 0, aplica desde el primer día posterior al vencimiento.',
+                'description' => 'Días de referencia para atraso. La consecuencia operativa es bloqueo de nuevos créditos.',
             ],
         ];
 

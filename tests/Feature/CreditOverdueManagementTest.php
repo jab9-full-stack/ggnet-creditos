@@ -267,7 +267,7 @@ class CreditOverdueManagementTest extends TestCase
             ->assertStatus(200)
             ->assertSee('Cuotas vencidas')
             ->assertSee('Saldo vencido')
-            ->assertSee('Mora controlada');
+            ->assertSee('Política de atraso');
     }
 
     public function test_guest_cannot_mark_overdue(): void

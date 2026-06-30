@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Validation\ValidationException;
+
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -124,6 +126,24 @@ class CreditRequest extends Model
     public function canBeDeleted(): bool
     {
         return $this->status === self::STATUS_DRAFT;
+    }
+
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $creditRequest): void {
+            if (! $creditRequest->client_id) {
+                return;
+            }
+
+            $client = Client::query()->find($creditRequest->client_id);
+
+            if ($client?->credit_blocked_at) {
+                throw ValidationException::withMessages([
+                    'client_id' => 'Este cliente está bloqueado para nuevos créditos por atraso registrado.',
+                ]);
+            }
+        });
     }
 
     protected function casts(): array

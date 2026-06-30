@@ -32,14 +32,30 @@
                 @endcan
                 @can('credit_installments.apply_late_fee')
                     @if ($credit->status === \App\Models\Credit::STATUS_DISBURSED)
-                        <form method="POST" action="{{ route('credits.installments.apply-late-fees', $credit) }}" data-confirm="true" data-confirm-title="Aplicar mora" data-confirm-message="Se actualizarán vencimientos y se aplicará mora únicamente según configuración activa. La mora no se duplica en cuotas que ya la tengan aplicada.">
+                        <form method="POST" action="{{ route('credits.installments.process-delinquency', $credit) }}" data-confirm="true" data-confirm-title="Procesar atraso" data-confirm-message="Se actualizarán vencimientos y, si existe atraso, el cliente quedará bloqueado para nuevos créditos. No se cobrará ningún recargo.">
                             @csrf
-                            <button class="btn" style="background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; box-shadow:0 4px 12px rgba(154,52,18,.08);" type="submit">Aplicar mora</button>
+                            <button class="btn" style="background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; box-shadow:0 4px 12px rgba(154,52,18,.08);" type="submit">Procesar atraso</button>
                         </form>
                     @endif
                 @endcan
             </div>
         </header>
+
+        {{-- M07 política de atraso sin recargo --}}
+        @if (($clientCreditBlocked ?? false) || $credit->client?->credit_blocked_at)
+            <section class="panel" style="margin-bottom:18px; border-color:#fed7aa; background:#fff7ed;">
+                <div class="panel-body">
+                    <h2 style="margin:0 0 6px; font-size:18px; color:#9a3412;">Cliente bloqueado para nuevo crédito</h2>
+                    <p style="margin:0; color:#7c2d12;">
+                        No se cobran recargos de mora. Este cliente tiene atraso registrado y queda bloqueado para nuevos créditos.
+                    </p>
+                    <p class="muted" style="margin:8px 0 0;">
+                        {{ $clientCreditBlockReason ?? $credit->client?->credit_block_reason ?? 'Atraso registrado en cartera.' }}
+                    </p>
+                </div>
+            </section>
+        @endif
+
 
         @if (session('status'))
             <div hidden data-toast-type="success" data-toast-title="Operación completada" data-toast-message="{{ session('status') }}"></div>
@@ -233,14 +249,13 @@
                 </div>
             </div>
         </section>
-
-        @if ($overdueInstallmentsCount > 0)
+@if ($overdueInstallmentsCount > 0)
             <section class="panel" style="margin-bottom:18px; border:1px solid rgba(220,38,38,.28); background:#fff7f7;">
                 <div class="panel-body">
                     <h2 style="margin:0 0 6px; font-size:18px; color:var(--danger);">Cuotas vencidas</h2>
                     <p style="margin:0; color:#7f1d1d;">
                         Este crédito tiene {{ $overdueInstallmentsCount }} cuota(s) vencida(s) por Q {{ number_format($overdueAmount, 2) }}.
-                        Mora controlada: los recargos se aplican solo si la configuración de mora está activa y nunca se duplican sobre la misma cuota.
+                        Política de atraso: no se cobran recargos de mora. El atraso bloquea nuevos créditos para el cliente.
                     </p>
                 </div>
             </section>

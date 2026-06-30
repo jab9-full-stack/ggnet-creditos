@@ -9,10 +9,10 @@ class SettingPresenter
     public static function title(Setting $setting): string
     {
         return match ($setting->key) {
-            'credit_late_fee_enabled' => 'Mora activa',
+            'credit_late_fee_enabled' => 'Política de mora sin recargo',
             'credit_late_fee_type' => 'Tipo de mora',
-            'credit_late_fee_fixed_amount' => 'Monto fijo de mora',
-            'credit_late_fee_percentage' => 'Porcentaje de mora',
+            'credit_late_fee_fixed_amount' => 'Monto fijo de mora (siempre Q0.00)',
+            'credit_late_fee_percentage' => 'Porcentaje de mora (siempre 0%)',
             'credit_late_fee_grace_days' => 'Días de gracia',
             'app.display_name' => 'Nombre visible del sistema',
             'app.country' => 'País operativo',
@@ -25,10 +25,10 @@ class SettingPresenter
     public static function help(Setting $setting): string
     {
         return match ($setting->key) {
-            'credit_late_fee_enabled' => 'Define si el sistema puede aplicar recargos de mora a cuotas vencidas.',
+            'credit_late_fee_enabled' => 'La política vigente no cobra recargos; el atraso bloquea nuevos créditos.',
             'credit_late_fee_type' => 'Monto fijo o porcentaje sobre capital más interés de la cuota.',
-            'credit_late_fee_fixed_amount' => 'Cantidad exacta de mora por cuota vencida.',
-            'credit_late_fee_percentage' => 'Porcentaje de mora sobre capital más interés de la cuota.',
+            'credit_late_fee_fixed_amount' => 'Debe permanecer en Q0.00. La mora no genera cobro adicional.',
+            'credit_late_fee_percentage' => 'Debe permanecer en 0%. La mora no genera cobro adicional.',
             'credit_late_fee_grace_days' => 'Cantidad de días de gracia antes de aplicar mora.',
             'app.display_name' => 'Nombre que aparece en pantallas, encabezados y referencias internas.',
             'app.country' => 'País base para la operación inicial del sistema.',

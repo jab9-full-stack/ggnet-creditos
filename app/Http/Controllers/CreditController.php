@@ -95,7 +95,18 @@ class CreditController extends Controller
             ->limit(20)
             ->get();
 
+
+        $creditBlockedClient = \App\Models\Client::query()
+            ->whereKey($credit->client_id)
+            ->whereNotNull('credit_blocked_at')
+            ->first();
+
+        $clientCreditBlocked = (bool) $creditBlockedClient;
+        $clientCreditBlockReason = $creditBlockedClient?->credit_block_reason;
+
         return view('credits.show', [
+            'clientCreditBlocked' => $clientCreditBlocked,
+            'clientCreditBlockReason' => $clientCreditBlockReason,
             'credit' => $credit,
             'auditLogs' => $auditLogs,
         ]);
