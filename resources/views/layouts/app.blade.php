@@ -1837,6 +1837,65 @@
             }
         }
 
+
+        /* BIENESTAR · M05.3 utilidades visuales base */
+        .btn-secondary {
+            background: #eef2f7;
+            color: #111827;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .inline-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .section-title {
+            margin: 0 0 6px;
+            font-size: 18px;
+            letter-spacing: -.02em;
+        }
+
+        .section-subtitle {
+            margin: 0 0 16px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .status-success {
+            color: var(--success);
+            font-weight: 800;
+        }
+
+        .status-warning {
+            color: var(--warning);
+            font-weight: 800;
+        }
+
+        .status-danger {
+            color: var(--danger);
+            font-weight: 800;
+        }
+
+        @media (max-width: 760px) {
+            .inline-actions {
+                justify-content: stretch;
+            }
+
+            .inline-actions .btn,
+            .inline-actions form,
+            .inline-actions button {
+                width: 100%;
+            }
+        }
+
     </style>
 </head>
 <body class="{{ auth()->check() ? 'app-page' : 'auth-page' }}">
@@ -2107,6 +2166,10 @@
                     const isSection = (
                         (path.startsWith('/agencies') && linkPath === '/agencies') ||
                         (path.startsWith('/users') && linkPath === '/users') ||
+                        (path.startsWith('/clients') && linkPath === '/clients') ||
+                        (path.startsWith('/credit-requests') && linkPath === '/credit-requests') ||
+                        (path.startsWith('/credits') && linkPath === '/credits') ||
+                        (path.startsWith('/cash') && linkPath === '/cash') ||
                         (path.startsWith('/audit-logs') && linkPath === '/audit-logs') ||
                         (path.startsWith('/settings') && linkPath === '/settings')
                     );

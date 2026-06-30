@@ -40,8 +40,7 @@
                     @endif
                 </form>
 
-                <div class="table-scroll">
-                    <div class="desktop-table table-scroll">
+                <div class="desktop-table table-scroll">
                     <table class="table compact-table">
                         <thead>
                             <tr>

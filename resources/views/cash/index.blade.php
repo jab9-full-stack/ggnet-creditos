@@ -5,12 +5,12 @@
     @include('partials.sidebar')
 
     <main class="main">
-        <div class="page-header">
+        <header class="topbar">
             <div>
-                <h1>Caja</h1>
+                <h1 class="page-title">Caja</h1>
                 <p class="page-subtitle">Apertura, cierre, arqueo y movimientos financieros. Los pagos anteriores a M05 quedan como históricos fuera de caja formal.</p>
             </div>
-        </div>
+        </header>
 
         @if ($errors->any())
             <div class="panel" style="border-color:rgba(185,28,28,.35); background:#fff7f7;">
@@ -22,7 +22,7 @@
             </div>
         @endif
 
-        <section class="metric-grid">
+        <section class="grid grid-3">
             <div class="metric">
                 <span>Estado</span>
                 <strong>{{ $activeSession ? 'Caja abierta' : 'Sin caja abierta' }}</strong>
@@ -145,7 +145,7 @@
                 <h2 style="margin:0 0 6px; font-size:18px;">Totales del día por método</h2>
                 <p class="muted" style="margin:0 0 16px;">Solo movimientos activos. Los anulados quedan visibles por auditoría, no por decoración.</p>
 
-                <div class="metric-grid">
+                <div class="grid grid-3">
                     @foreach (\App\Models\CashMovement::METHODS as $method => $label)
                         <div class="metric">
                             <span>{{ $label }}</span>
