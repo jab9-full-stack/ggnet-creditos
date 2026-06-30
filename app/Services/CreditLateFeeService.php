@@ -284,7 +284,25 @@ class CreditLateFeeService
     {
         $value = DB::table('settings')->where('key', $key)->value('value');
 
-        return $value === null ? $default : (string) $value;
+        if ($value === null) {
+            return $default;
+        }
+
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                if (is_bool($decoded)) {
+                    return $decoded ? '1' : '0';
+                }
+
+                if (is_scalar($decoded)) {
+                    return (string) $decoded;
+                }
+            }
+        }
+
+        return (string) $value;
     }
 
     private function booleanSetting(string $key, bool $default): bool

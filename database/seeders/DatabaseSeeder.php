@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(CreditLateFeeSettingSeeder::class);
+
         $agency = Agency::query()->updateOrCreate(
             ['code' => 'CENTRAL'],
             [

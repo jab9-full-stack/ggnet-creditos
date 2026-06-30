@@ -5,9 +5,13 @@ namespace Database\Seeders;
 use App\Services\CreditLateFeeService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 
 class CreditLateFeeSettingSeeder extends Seeder
 {
+    /**
+     * @throws JsonException
+     */
     public function run(): void
     {
         $now = now();
@@ -15,7 +19,7 @@ class CreditLateFeeSettingSeeder extends Seeder
         $settings = [
             [
                 'key' => CreditLateFeeService::SETTING_ENABLED,
-                'value' => '0',
+                'value' => false,
                 'type' => 'boolean',
                 'description' => 'Activa o desactiva la aplicación controlada de mora en cuotas vencidas.',
             ],
@@ -39,7 +43,7 @@ class CreditLateFeeSettingSeeder extends Seeder
             ],
             [
                 'key' => CreditLateFeeService::SETTING_GRACE_DAYS,
-                'value' => '0',
+                'value' => 0,
                 'type' => 'integer',
                 'description' => 'Días de gracia antes de aplicar mora. Con 0, aplica desde el primer día posterior al vencimiento.',
             ],
@@ -50,7 +54,7 @@ class CreditLateFeeSettingSeeder extends Seeder
                 ['key' => $setting['key']],
                 [
                     'group' => 'credits',
-                    'value' => $setting['value'],
+                    'value' => json_encode($setting['value'], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
                     'type' => $setting['type'],
                     'description' => $setting['description'],
                     'is_public' => false,
