@@ -19,6 +19,7 @@ class CreditPermissionSeeder extends Seeder
             'credit_payments.view',
             'credit_payments.create',
             'credit_payments.void',
+            'credit_payment_receipts.view',
             'credit_installments.mark_overdue',
         ];
 
@@ -35,16 +36,19 @@ class CreditPermissionSeeder extends Seeder
             'manager' => [
                 'credits.view',
                 'credit_payments.view',
+                'credit_payment_receipts.view',
                 'credit_installments.mark_overdue',
             ],
             'analyst' => [
                 'credits.view',
                 'credit_payments.view',
+                'credit_payment_receipts.view',
             ],
             'cashier' => [
                 'credits.view',
                 'credit_payments.view',
                 'credit_payments.create',
+                'credit_payment_receipts.view',
             ],
         ];
 

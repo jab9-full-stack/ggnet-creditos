@@ -6,6 +6,7 @@ use App\Models\Credit;
 use App\Models\CreditInstallment;
 use App\Models\CreditPayment;
 use App\Models\User;
+use App\Services\CreditPaymentReceiptService;
 use App\Support\Audit\AuditLogger;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -108,8 +109,17 @@ class CreditPaymentService
 
             $oldCreditStatus = $lockedCredit->status;
 
-            app(CashMovementService::class)->createCreditPaymentMovement(
+            $cashMovement = app(CashMovementService::class)->createCreditPaymentMovement(
                 payment: $payment,
+                user: $user,
+                auditLogger: $auditLogger,
+            );
+
+            $payment->load(['credit', 'client', 'installments']);
+
+            app(CreditPaymentReceiptService::class)->createForPayment(
+                payment: $payment,
+                cashMovement: $cashMovement,
                 user: $user,
                 auditLogger: $auditLogger,
             );
@@ -123,7 +133,7 @@ class CreditPaymentService
                 $lockedCredit->save();
             }
 
-            $payment->load(['credit', 'client', 'installments']);
+            $payment->load(['credit', 'client', 'installments', 'receipt']);
 
             $auditLogger->log(
                 event: 'credit_payment.created',

@@ -13,6 +13,7 @@ use App\Http\Controllers\CreditController;
 use App\Http\Controllers\CreditDisbursementController;
 use App\Http\Controllers\CreditInstallmentOverdueController;
 use App\Http\Controllers\CreditPaymentController;
+use App\Http\Controllers\CreditPaymentReceiptController;
 use App\Http\Controllers\CreditPaymentVoidController;
 use App\Http\Controllers\CreditRequestStatusController;
 use App\Http\Controllers\DashboardController;
@@ -92,6 +93,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/credits/{credit}/payments/{payment}/void', [CreditPaymentVoidController::class, 'store'])
         ->middleware('permission:credit_payments.void')
         ->name('credits.payments.void');
+
+    Route::get('/credits/{credit}/payments/{payment}/receipt', [CreditPaymentReceiptController::class, 'show'])
+        ->middleware('permission:credit_payment_receipts.view')
+        ->name('credits.payments.receipt.show');
 
     Route::resource('credits', CreditController::class)
         ->only(['index', 'show'])

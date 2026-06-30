@@ -81,6 +81,8 @@ class CreditController extends Controller
             'approvedBy:id,name,email',
             'disbursedBy:id,name,email',
             'installments.payment:id,code,amount,paid_at,method',
+            'installments.payment.receipt:id,credit_payment_id,code,status',
+            'payments.receipt:id,credit_payment_id,code,status,issued_at,voided_at',
             'payments.receivedBy:id,name,email',
             'payments.voidedBy:id,name,email',
         ]);

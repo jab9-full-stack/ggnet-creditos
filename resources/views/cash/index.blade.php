@@ -166,6 +166,7 @@
                         <thead>
                             <tr>
                                 <th>Código</th>
+                                <th>Recibo</th>
                                 <th>Hora</th>
                                 <th>Tipo</th>
                                 <th>Método</th>
@@ -180,6 +181,19 @@
                             @forelse ($movements as $movement)
                                 <tr>
                                     <td><strong>{{ $movement->code }}</strong></td>
+                                    <td>
+                                        @can('credit_payment_receipts.view')
+                                            @if ($movement->creditPayment?->receipt)
+                                                <a class="btn" style="background:#eef2f7; padding:8px 10px;" href="{{ route('credits.payments.receipt.show', [$movement->creditPayment->credit_id, $movement->creditPayment]) }}">
+                                                    {{ $movement->creditPayment->receipt->code }}
+                                                </a>
+                                            @else
+                                                <span class="muted">—</span>
+                                            @endif
+                                        @else
+                                            <span class="muted">—</span>
+                                        @endcan
+                                    </td>
                                     <td>{{ $movement->movement_at?->format('d/m/Y H:i') }}</td>
                                     <td>{{ $movement->typeLabel() }}</td>
                                     <td>{{ $movement->methodLabel() }}</td>
@@ -224,7 +238,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="muted">No hay movimientos registrados hoy.</td>
+                                    <td colspan="10" class="muted">No hay movimientos registrados hoy.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -245,6 +259,20 @@
                                 <div>
                                     <span class="mobile-field-label">Estado</span>
                                     <span class="mobile-field-value">{{ $movement->statusLabel() }}</span>
+                                </div>
+                                <div>
+                                    <span class="mobile-field-label">Recibo</span>
+                                    <span class="mobile-field-value">
+                                        @can('credit_payment_receipts.view')
+                                            @if ($movement->creditPayment?->receipt)
+                                                <a href="{{ route('credits.payments.receipt.show', [$movement->creditPayment->credit_id, $movement->creditPayment]) }}">{{ $movement->creditPayment->receipt->code }}</a>
+                                            @else
+                                                —
+                                            @endif
+                                        @else
+                                            —
+                                        @endcan
+                                    </span>
                                 </div>
                                 <div>
                                     <span class="mobile-field-label">Usuario</span>

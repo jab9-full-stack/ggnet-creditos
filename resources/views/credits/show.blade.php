@@ -414,6 +414,7 @@
                         <thead>
                             <tr>
                                 <th>Código</th>
+                                <th>Recibo</th>
                                 <th>Fecha</th>
                                 <th>Método</th>
                                 <th>Cuotas</th>
@@ -428,6 +429,22 @@
                             @forelse ($credit->payments as $payment)
                                 <tr>
                                     <td><strong>{{ $payment->code }}</strong></td>
+                                    <td>
+                                        @can('credit_payment_receipts.view')
+                                            @if ($payment->receipt)
+                                                <a class="btn" style="background:#eef2f7; padding:8px 10px;" href="{{ route('credits.payments.receipt.show', [$credit, $payment]) }}">
+                                                    {{ $payment->receipt->code }}
+                                                </a>
+                                                @if ($payment->receipt->status === \App\Models\CreditPaymentReceipt::STATUS_VOIDED)
+                                                    <div class="muted">Anulado</div>
+                                                @endif
+                                            @else
+                                                <span class="muted">Pendiente</span>
+                                            @endif
+                                        @else
+                                            <span class="muted">Sin permiso</span>
+                                        @endcan
+                                    </td>
                                     <td>{{ $payment->paid_at?->format('d/m/Y H:i') }}</td>
                                     <td>{{ $payment->methodLabel() }}</td>
                                     <td>{{ $payment->installments_count }}</td>
@@ -468,7 +485,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="muted">No hay pagos registrados todavía.</td>
+                                    <td colspan="10" class="muted">No hay pagos registrados todavía.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -486,6 +503,20 @@
                             <div class="mobile-card-grid">
                                 <div><span class="mobile-field-label">Cuotas</span><span class="mobile-field-value">{{ $payment->installments_count }}</span></div>
                                 <div><span class="mobile-field-label">Referencia</span><span class="mobile-field-value">{{ $payment->reference ?: '—' }}</span></div>
+                                <div>
+                                    <span class="mobile-field-label">Recibo</span>
+                                    <span class="mobile-field-value">
+                                        @can('credit_payment_receipts.view')
+                                            @if ($payment->receipt)
+                                                <a href="{{ route('credits.payments.receipt.show', [$credit, $payment]) }}">{{ $payment->receipt->code }}</a>
+                                            @else
+                                                —
+                                            @endif
+                                        @else
+                                            Sin permiso
+                                        @endcan
+                                    </span>
+                                </div>
                             </div>
 
                             @if ($payment->void_reason)

@@ -6,6 +6,7 @@ use App\Models\Credit;
 use App\Models\CreditInstallment;
 use App\Models\CreditPayment;
 use App\Models\User;
+use App\Services\CreditPaymentReceiptService;
 use App\Support\Audit\AuditLogger;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -102,6 +103,13 @@ class CreditPaymentVoidService
             $freshPayment = $lockedPayment->fresh(['credit', 'client', 'installments']);
 
             app(CashMovementService::class)->voidCreditPaymentMovement(
+                payment: $freshPayment,
+                reason: $reason,
+                user: $user,
+                auditLogger: $auditLogger,
+            );
+
+            app(CreditPaymentReceiptService::class)->voidForPayment(
                 payment: $freshPayment,
                 reason: $reason,
                 user: $user,

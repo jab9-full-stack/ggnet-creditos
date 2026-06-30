@@ -30,7 +30,7 @@ class CashSessionController extends Controller
             ->get();
 
         $movements = CashMovement::query()
-            ->with(['cashSession', 'createdBy', 'voidedBy'])
+            ->with(['cashSession', 'createdBy', 'voidedBy', 'creditPayment.receipt:id,credit_payment_id,code,status'])
             ->whereDate('movement_at', now()->toDateString())
             ->when(! $canSeeReports, fn ($query) => $query->where('created_by', $user->id))
             ->latest('movement_at')

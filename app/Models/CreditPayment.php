@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
@@ -67,6 +68,11 @@ class CreditPayment extends Model
     public function installments(): HasMany
     {
         return $this->hasMany(CreditInstallment::class);
+    }
+
+    public function receipt(): HasOne
+    {
+        return $this->hasOne(CreditPaymentReceipt::class);
     }
 
     public function receivedBy(): BelongsTo

@@ -68,6 +68,11 @@ class Credit extends Model
         return $this->hasMany(CreditPayment::class)->latest('paid_at');
     }
 
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(CreditPaymentReceipt::class)->latest('issued_at');
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CashMovement extends Model
@@ -99,6 +100,11 @@ class CashMovement extends Model
     public function creditPayment(): BelongsTo
     {
         return $this->belongsTo(CreditPayment::class);
+    }
+
+    public function receipt(): HasOne
+    {
+        return $this->hasOne(CreditPaymentReceipt::class);
     }
 
     public function createdBy(): BelongsTo
