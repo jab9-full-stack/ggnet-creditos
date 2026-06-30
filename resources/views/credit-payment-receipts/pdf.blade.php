@@ -296,9 +296,9 @@
 
         <div class="header">
             <div class="brand">
-                <h1>{{ $receipt->agency?->legal_name ?: ($receipt->agency?->name ?: 'BIENESTAR GGNET Créditos') }}</h1>
+                <h1>BIENESTAR</h1>
                 <p>{{ $receipt->agency?->name ?? 'Agencia Central' }}</p>
-                <p>Comprobante financiero interno de pago de crédito</p>
+                <p>Comprobante financiero de pago de crédito</p>
             </div>
 
             <div class="receipt-meta">
