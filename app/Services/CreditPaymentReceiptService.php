@@ -48,6 +48,7 @@ class CreditPaymentReceiptService
                 'due_date' => $installment->due_date?->toDateString(),
                 'principal_amount' => (string) $installment->principal_amount,
                 'interest_amount' => (string) $installment->interest_amount,
+                'late_fee_amount' => (string) ($installment->late_fee_amount ?? 0),
                 'total_amount' => (string) $installment->total_amount,
                 'paid_amount' => (string) $installment->paid_amount,
                 'paid_at' => $installment->paid_at?->toDateTimeString(),

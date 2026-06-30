@@ -24,9 +24,17 @@
 
                 @can('credit_installments.mark_overdue')
                     @if ($credit->status === \App\Models\Credit::STATUS_DISBURSED)
-                        <form method="POST" action="{{ route('credits.installments.mark-overdue', $credit) }}" data-confirm="true" data-confirm-title="Actualizar vencimientos" data-confirm-message="Se revisarán las cuotas pendientes y se marcarán como vencidas las que tengan fecha anterior a hoy. No se aplicarán recargos.">
+                        <form method="POST" action="{{ route('credits.installments.mark-overdue', $credit) }}" data-confirm="true" data-confirm-title="Actualizar vencimientos" data-confirm-message="Se revisarán las cuotas pendientes y se marcarán como vencidas las que tengan fecha anterior a hoy. Esta acción no aplica recargos.">
                             @csrf
                             <button class="btn" style="background:#ffffff; border:1px solid var(--line); color:#111827; box-shadow:0 4px 12px rgba(15,23,42,.06);" type="submit">Actualizar vencimientos</button>
+                        </form>
+                    @endif
+                @endcan
+                @can('credit_installments.apply_late_fee')
+                    @if ($credit->status === \App\Models\Credit::STATUS_DISBURSED)
+                        <form method="POST" action="{{ route('credits.installments.apply-late-fees', $credit) }}" data-confirm="true" data-confirm-title="Aplicar mora" data-confirm-message="Se actualizarán vencimientos y se aplicará mora únicamente según configuración activa. La mora no se duplica en cuotas que ya la tengan aplicada.">
+                            @csrf
+                            <button class="btn" style="background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; box-shadow:0 4px 12px rgba(154,52,18,.08);" type="submit">Aplicar mora</button>
                         </form>
                     @endif
                 @endcan
@@ -67,6 +75,7 @@
 
             $overdueInstallmentsCount = $overdueInstallments->count();
             $overdueAmount = round((float) $overdueInstallments->sum(fn ($item) => (float) $item->total_amount), 2);
+            $lateFeeAmount = round((float) $credit->installments->sum(fn ($item) => (float) ($item->late_fee_amount ?? 0)), 2);
 
             $paidAmount = $credit->paidAmount();
             $remainingAmount = $credit->remainingAmount();
@@ -231,7 +240,7 @@
                     <h2 style="margin:0 0 6px; font-size:18px; color:var(--danger);">Cuotas vencidas</h2>
                     <p style="margin:0; color:#7f1d1d;">
                         Este crédito tiene {{ $overdueInstallmentsCount }} cuota(s) vencida(s) por Q {{ number_format($overdueAmount, 2) }}.
-                        No se aplican recargos en este módulo.
+                        Mora controlada: los recargos se aplican solo si la configuración de mora está activa y nunca se duplican sobre la misma cuota.
                     </p>
                 </div>
             </section>
@@ -319,6 +328,7 @@
                                 <th>Fecha de vencimiento</th>
                                 <th>Capital</th>
                                 <th>Interés</th>
+                                <th>Mora</th>
                                 <th>Total cuota</th>
                                 <th>Pagado</th>
                                 <th>Pago</th>
@@ -332,6 +342,7 @@
                                     <td>{{ $installment->due_date?->format('d/m/Y') }}</td>
                                     <td>Q {{ number_format((float) $installment->principal_amount, 2) }}</td>
                                     <td>Q {{ number_format((float) $installment->interest_amount, 2) }}</td>
+                                    <td>Q {{ number_format((float) ($installment->late_fee_amount ?? 0), 2) }}</td>
                                     <td><strong>Q {{ number_format((float) $installment->total_amount, 2) }}</strong></td>
                                     <td>Q {{ number_format((float) $installment->paid_amount, 2) }}</td>
                                     <td>{{ $installment->payment?->code ?? '—' }}</td>
@@ -364,6 +375,7 @@
                             <div class="mobile-card-grid">
                                 <div><span class="mobile-field-label">Capital</span><span class="mobile-field-value">Q {{ number_format((float) $installment->principal_amount, 2) }}</span></div>
                                 <div><span class="mobile-field-label">Interés</span><span class="mobile-field-value">Q {{ number_format((float) $installment->interest_amount, 2) }}</span></div>
+                                <div><span class="mobile-field-label">Mora</span><span class="mobile-field-value">Q {{ number_format((float) ($installment->late_fee_amount ?? 0), 2) }}</span></div>
                                 <div><span class="mobile-field-label">Pagado</span><span class="mobile-field-value">Q {{ number_format((float) $installment->paid_amount, 2) }}</span></div>
                                 <div><span class="mobile-field-label">Estado</span><span class="mobile-field-value">{{ $installment->statusLabel() }}</span></div>
                             </div>

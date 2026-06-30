@@ -17,10 +17,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'due_date',
     'principal_amount',
     'interest_amount',
+    'late_fee_amount',
+    'late_fee_days',
     'total_amount',
     'paid_amount',
     'paid_at',
     'overdue_at',
+    'late_fee_applied_at',
+    'late_fee_applied_by',
+    'late_fee_notes',
     'notes',
     'created_by',
     'updated_by',
@@ -87,6 +92,16 @@ class CreditInstallment extends Model
         };
     }
 
+    public function baseAmount(): float
+    {
+        return round((float) $this->principal_amount + (float) $this->interest_amount, 2);
+    }
+
+    public function hasLateFee(): bool
+    {
+        return round((float) $this->late_fee_amount, 2) > 0;
+    }
+
     protected function casts(): array
     {
         return [
@@ -94,10 +109,13 @@ class CreditInstallment extends Model
             'due_date' => 'date',
             'principal_amount' => 'decimal:2',
             'interest_amount' => 'decimal:2',
+            'late_fee_amount' => 'decimal:2',
+            'late_fee_days' => 'integer',
             'total_amount' => 'decimal:2',
             'paid_amount' => 'decimal:2',
             'paid_at' => 'datetime',
             'overdue_at' => 'datetime',
+            'late_fee_applied_at' => 'datetime',
         ];
     }
 }

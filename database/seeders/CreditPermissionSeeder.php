@@ -21,6 +21,7 @@ class CreditPermissionSeeder extends Seeder
             'credit_payments.void',
             'credit_payment_receipts.view',
             'credit_installments.mark_overdue',
+            'credit_installments.apply_late_fee',
         ];
 
         foreach ($permissions as $permission) {
@@ -38,6 +39,7 @@ class CreditPermissionSeeder extends Seeder
                 'credit_payments.view',
                 'credit_payment_receipts.view',
                 'credit_installments.mark_overdue',
+                'credit_installments.apply_late_fee',
             ],
             'analyst' => [
                 'credits.view',

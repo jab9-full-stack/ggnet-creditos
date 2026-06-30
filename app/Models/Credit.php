@@ -135,6 +135,13 @@ class Credit extends Model
 
     public function remainingAmount(): float
     {
+        if ($this->installments()->exists()) {
+            return round(
+                (float) $this->installments()->sum('total_amount') - (float) $this->installments()->sum('paid_amount'),
+                2
+            );
+        }
+
         return round((float) $this->total_amount - $this->paidAmount(), 2);
     }
 
@@ -153,6 +160,20 @@ class Credit extends Model
         return round((float) $this->installments()
             ->where('status', CreditInstallment::STATUS_OVERDUE)
             ->sum('total_amount'), 2);
+    }
+
+    public function lateFeeAmount(): float
+    {
+        return round((float) $this->installments()->sum('late_fee_amount'), 2);
+    }
+
+    public function currentTotalAmount(): float
+    {
+        if ($this->installments()->exists()) {
+            return round((float) $this->installments()->sum('total_amount'), 2);
+        }
+
+        return round((float) $this->total_amount, 2);
     }
 
     protected function casts(): array

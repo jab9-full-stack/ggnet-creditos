@@ -403,11 +403,12 @@
         <table class="detail-table">
             <thead>
                 <tr>
-                    <th style="width: 9%;">No.</th>
-                    <th style="width: 23%;">Vencimiento</th>
-                    <th class="text-right" style="width: 22%;">Capital</th>
-                    <th class="text-right" style="width: 22%;">Interés</th>
-                    <th class="text-right" style="width: 24%;">Total cuota</th>
+                    <th style="width: 8%;">No.</th>
+                    <th style="width: 20%;">Vencimiento</th>
+                    <th class="text-right" style="width: 18%;">Capital</th>
+                    <th class="text-right" style="width: 18%;">Interés</th>
+                    <th class="text-right" style="width: 16%;">Mora</th>
+                    <th class="text-right" style="width: 20%;">Total cuota</th>
                 </tr>
             </thead>
             <tbody>
@@ -419,11 +420,12 @@
                         </td>
                         <td class="text-right">Q {{ number_format((float) ($item['principal_amount'] ?? 0), 2) }}</td>
                         <td class="text-right">Q {{ number_format((float) ($item['interest_amount'] ?? 0), 2) }}</td>
+                        <td class="text-right">Q {{ number_format((float) ($item['late_fee_amount'] ?? 0), 2) }}</td>
                         <td class="text-right"><strong>Q {{ number_format((float) ($item['total_amount'] ?? 0), 2) }}</strong></td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5">No hay cuotas registradas en el recibo.</td>
+                        <td colspan="6">No hay cuotas registradas en el recibo.</td>
                     </tr>
                 @endforelse
             </tbody>
